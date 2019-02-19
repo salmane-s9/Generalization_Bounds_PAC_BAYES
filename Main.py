@@ -16,33 +16,12 @@ from torch.utils.data.dataset import Dataset
 from torchvision import datasets, transforms
 import numpy as np
 from PIL import Image
-
+from torch.nn.utils import parameters_to_vector
 from PacBayes_Loss import PacBayesLoss
 from utils import *
 
 
 # In[2]:
-
-
-INPUT_SIZE = 784
-HIDDEN_SIZE = [300 , 8 , 1200]
-NUM_CLASSES = 2
-NUM_EPOCHS = 20
-# BATCH_SIZE = np.size(x_train)
-LEARNING_RATE = 0.01
-MOMENTUM = 0.9
-
-Models = {'T-600' :FeedForwardNeuralNet(INPUT_SIZE, HIDDEN_SIZE[1], NUM_CLASSES),
-          'T-1200':FeedForwardNeuralNet(INPUT_SIZE, HIDDEN_SIZE[2], NUM_CLASSES),
-          'T2-300':FeedForwardNeuralNet2(INPUT_SIZE, HIDDEN_SIZE[0], NUM_CLASSES),
-          'T2-600':FeedForwardNeuralNet2(INPUT_SIZE, HIDDEN_SIZE[1], NUM_CLASSES),
-          'T2-1200':FeedForwardNeuralNet2(INPUT_SIZE, HIDDEN_SIZE[2], NUM_CLASSES),
-          'T3-600' :FeedForwardNeuralNet3(INPUT_SIZE, HIDDEN_SIZE[1], NUM_CLASSES) }
-
-net = Models['T-600']
-
-
-# In[29]:
 
 
 def alterning_targets(targets,label1_elements,label2_elements):
@@ -115,7 +94,28 @@ test_loader = torch.utils.data.DataLoader(dataset=custom_mnist_test,
                                                     shuffle=False)
 
 
-# In[30]:
+# In[46]:
+
+
+INPUT_SIZE = 784
+HIDDEN_SIZE = [300 , 8 , 1200]
+NUM_CLASSES = 2
+NUM_EPOCHS = 20
+# BATCH_SIZE = np.size(x_train)
+LEARNING_RATE = 0.01
+MOMENTUM = 0.9
+
+Models = {'T-600' :FeedForwardNeuralNet(INPUT_SIZE, HIDDEN_SIZE[1], NUM_CLASSES),
+          'T-1200':FeedForwardNeuralNet(INPUT_SIZE, HIDDEN_SIZE[2], NUM_CLASSES),
+          'T2-300':FeedForwardNeuralNet2(INPUT_SIZE, HIDDEN_SIZE[0], NUM_CLASSES),
+          'T2-600':FeedForwardNeuralNet2(INPUT_SIZE, HIDDEN_SIZE[1], NUM_CLASSES),
+          'T2-1200':FeedForwardNeuralNet2(INPUT_SIZE, HIDDEN_SIZE[2], NUM_CLASSES),
+          'T3-600' :FeedForwardNeuralNet3(INPUT_SIZE, HIDDEN_SIZE[1], NUM_CLASSES) }
+
+net = Models['T-600']
+
+
+# In[47]:
 
 
 def main(test_cuda=False):
@@ -131,45 +131,53 @@ def main(test_cuda=False):
     
     sigma_posterior_ = torch.abs(parameters_to_vector(net.parameters())).requires_grad_()
 
-    ct = PacBayesLoss(lambda_prior_, sigma_posterior_, net, conf_param, Precision, bound, 
+    BRE = PacBayesLoss(lambda_prior_, sigma_posterior_, net, conf_param, Precision, bound, 
                       data_size).to(device)
     
-    optimizer = torch.optim.RMSprop(ct.parameters(), lr = 0.001)
+    optimizer = torch.optim.RMSprop(BRE.parameters(), lr = 0.001)
     criterion  = nn.CrossEntropyLoss()
     
     
     for i, (images, labels) in enumerate(train_loader):
-            if i > 1:
-                break
-            print("\r{}%".format(100 * i // ct.data_size), end="")
+        
+#             if (i>2):
+#                 break
+                
+            print("\r{}%".format(100 * i // BRE.data_size), end="")
+            
             images = images.reshape(-1, 28 * 28).to(device)
             labels = labels.to(device)
             
-            loss1 = ct(net.parameters())
+            print(BRE.lambda_prior_)
+            loss1 = BRE()
+    
+            modified_parameters = BRE.flat_params + torch.randn(BRE.d_size) * torch.exp(2 * BRE.sigma_posterior_).abs()
             
-            print(loss1.item())
-#             loss1.backward(retain_graph=True)
-            
-            print(ct.flat_params.grad)
-            
-            modified_parameters = ct.flat_params + torch.randn(ct.d_size) * torch.exp(2 * ct.sigma_posterior_).abs()
             indi = 0
             for name,ind,shape_ in network_params(net):
                 net.state_dict()[name].data.copy_(modified_parameters[indi:indi+ind].view(shape_)) 
                 indi = ind
                 
-        
+            
             
             outputs = net(images)
+            
+#             net.zero_grad()
+#             optimizer.zero_grad()
             loss2 = criterion(outputs.float(), labels.long())
-                
+#             loss2 = criterion(outputs.float(), torch.Tensor([1]).long())
+#             print(loss2.item())            
+                                         
             loss = loss1 + loss2
             
-            loss2.backward()
-            print(ct.flat_params.grad)
+            print(loss2.item())
+            
+            loss.backward()
+#             print(list(Z.grad for Z in list(net.parameters())))
+#             print(ct.flat_params.grad)
             
             
-#             optimizer.step()
+            optimizer.step()
 
 if __name__ == '__main__':
     torch.manual_seed(500)
