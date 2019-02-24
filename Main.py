@@ -122,7 +122,7 @@ def main(test_cuda=False):
     print('-'*80)
     device = torch.device("cuda" if test_cuda else "cpu")
     net = Models['T-600']
-    net = load_train_weights(net,'T-600.ckpt')
+    net = load_train_weights(net,'SGD_solutions/T-600.ckpt')
     conf_param=0.025 
     Precision= 100 
     bound=0.1 
