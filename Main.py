@@ -145,7 +145,7 @@ def main(test_cuda=False):
         for i, (images, labels) in enumerate(train_loader):
 #                 if i> 0:
 #                     break
-                print("\r{}%".format(i), end="")
+                print("\r{}%".format(100 * i // BRE.data_size), end="")
 
                 images = images.reshape(-1, 28 * 28).to(device)
                 labels = labels.to(device)
