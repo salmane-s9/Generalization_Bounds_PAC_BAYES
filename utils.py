@@ -138,4 +138,10 @@ class FeedForwardNeuralNet3R(nn.Module):
     def forward(self, x):
         out = self.main(x)
         return out
-
+def load_train_weights(model ,weights):
+    pretrained_dict = torch.load(weights)
+    model_dict = model.state_dict()
+    model_dict.update(pretrained_dict)
+    model.load_state_dict(model_dict)
+    model.state_dict()
+    return model
