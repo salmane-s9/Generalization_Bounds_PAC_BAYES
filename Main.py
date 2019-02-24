@@ -122,62 +122,54 @@ def main(test_cuda=False):
     print('-'*80)
     device = torch.device("cuda" if test_cuda else "cpu")
     net = Models['T-600']
+    net = load_train_weights(net,'T-600.ckpt')
     conf_param=0.025 
     Precision= 100 
     bound=0.1 
     data_size= 55000
     
-    lambda_prior_ = torch.tensor(-3. ,device=device).requires_grad_()
+    lambda_prior = torch.tensor(-3. ,device=device).requires_grad_()
     
-    sigma_posterior_ = torch.abs(parameters_to_vector(net.parameters())).requires_grad_()
+    sigma_posterior = torch.abs(parameters_to_vector(net.parameters())).requires_grad_()
 
-    BRE = PacBayesLoss(lambda_prior_, sigma_posterior_, net, conf_param, Precision, bound, 
+    BRE = PacBayesLoss(lambda_prior, sigma_posterior, net, conf_param, Precision, bound, 
                       data_size).to(device)
     
     optimizer = torch.optim.RMSprop(BRE.parameters(), lr = 0.001)
     criterion  = nn.CrossEntropyLoss()
+    nnloss = mnnLoss(criterion, BRE.flat_params, BRE.sigma_posterior_ , net , BRE.d_size)
+    epochs = 2
     
-    
-    for i, (images, labels) in enumerate(train_loader):
-        
-#             if (i>2):
-#                 break
+    for epoch in np.arange(1,epochs): 
+        print(" \n Epoch {} : ".format(epoch), end="\n")
+        for i, (images, labels) in enumerate(train_loader):
+#                 if i> 0:
+#                     break
+                print("\r{}%".format(i), end="")
+
+                images = images.reshape(-1, 28 * 28).to(device)
+                labels = labels.to(device)
                 
-            print("\r{}%".format(100 * i // BRE.data_size), end="")
-            
-            images = images.reshape(-1, 28 * 28).to(device)
-            labels = labels.to(device)
-            
-            print(BRE.lambda_prior_)
-            loss1 = BRE()
+                loss1 = BRE()
+
+                outputs = net(images)
+
+
+                loss2 = nnloss(images,labels)
     
-            modified_parameters = BRE.flat_params + torch.randn(BRE.d_size) * torch.exp(2 * BRE.sigma_posterior_).abs()
-            
-            indi = 0
-            for name,ind,shape_ in network_params(net):
-                net.state_dict()[name].data.copy_(modified_parameters[indi:indi+ind].view(shape_)) 
-                indi = ind
+                loss = loss1 + loss2
+
+                net.zero_grad()
+
+
+                loss.backward()
+                weights_grad = torch.cat(list(Z.grad.view(-1) for Z in list(net.parameters())),dim= 0)
+               
+                BRE.flat_params.grad += weights_grad
+                BRE.sigma_posterior_.grad += weights_grad * nnloss.noise 
                 
-            
-            
-            outputs = net(images)
-            
-#             net.zero_grad()
-#             optimizer.zero_grad()
-            loss2 = criterion(outputs.float(), labels.long())
-#             loss2 = criterion(outputs.float(), torch.Tensor([1]).long())
-#             print(loss2.item())            
-                                         
-            loss = loss1 + loss2
-            
-            print(loss2.item())
-            
-            loss.backward()
-#             print(list(Z.grad for Z in list(net.parameters())))
-#             print(ct.flat_params.grad)
-            
-            
-            optimizer.step()
+                optimizer.step()
+                optimizer.zero_grad()
 
 if __name__ == '__main__':
     torch.manual_seed(500)
