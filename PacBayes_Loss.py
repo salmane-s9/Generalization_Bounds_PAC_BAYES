@@ -17,7 +17,7 @@ from utils import calc_BRE_term,calc_kullback_leibler
 class PacBayesLoss(nn.Module):
     
     def __init__(self, lambda_prior_ ,sigma_posterior_ , params, conf_param , Precision , 
-                 bound , data_size ,reduce=None, reduction='mean'):
+                 bound , data_size):
         
         super(PacBayesLoss, self).__init__()
         self.lambda_prior_ = nn.Parameter(lambda_prior_)
