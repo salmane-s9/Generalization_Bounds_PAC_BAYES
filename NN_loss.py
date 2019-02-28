@@ -1,15 +1,6 @@
-
-# coding: utf-8
-
-# In[1]:
-
 import torch
 import torch.nn as nn
 from utils import network_params
-
-
-
-# In[ ]:
 
 class mnnLoss(nn.Module):
     
