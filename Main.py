@@ -19,6 +19,7 @@ from PIL import Image
 from torch.nn.utils import parameters_to_vector
 from PacBayes_Loss import PacBayesLoss
 from utils import *
+from NN_loss import mnnLoss
 
 
 # In[2]:
@@ -78,7 +79,7 @@ class CustomMNIST(Dataset):
     
     
 transformations = transforms.Compose([transforms.ToTensor()])
-custom_mnist_train =     CustomMNIST(x_train,y_train,
+custom_mnist_train = CustomMNIST(x_train,y_train,
                              28, 28,
                              transformations)
 train_loader = torch.utils.data.DataLoader(dataset=custom_mnist_train,
@@ -123,10 +124,10 @@ def main(test_cuda=False):
     device = torch.device("cuda" if test_cuda else "cpu")
     net = Models['T-600']
     net = load_train_weights(net,'SGD_solutions/T-600.ckpt')
-    conf_param=0.025 
-    Precision= 100 
-    bound=0.1 
-    data_size= 55000
+    conf_param = 0.025
+    Precision = 100
+    bound = 0.1
+    data_size = 55000
     
     lambda_prior = torch.tensor(-3. ,device=device).requires_grad_()
     
@@ -135,12 +136,12 @@ def main(test_cuda=False):
     BRE = PacBayesLoss(lambda_prior, sigma_posterior, net, conf_param, Precision, bound, 
                       data_size).to(device)
     
-    optimizer = torch.optim.RMSprop(BRE.parameters(), lr = 0.001)
-    criterion  = nn.CrossEntropyLoss()
-    nnloss = mnnLoss(criterion, BRE.flat_params, BRE.sigma_posterior_ , net , BRE.d_size)
+    optimizer = torch.optim.RMSprop(BRE.parameters(), lr=0.001)
+    criterion = nn.CrossEntropyLoss()
+    nnloss = mnnLoss(criterion, BRE.flat_params, BRE.sigma_posterior_, net, BRE.d_size)
     epochs = 2
     
-    for epoch in np.arange(1,epochs): 
+    for epoch in np.arange(1, epochs):
         print(" \n Epoch {} : ".format(epoch), end="\n")
         for i, (images, labels) in enumerate(train_loader):
 #                 if i> 0:
@@ -149,21 +150,21 @@ def main(test_cuda=False):
 
                 images = images.reshape(-1, 28 * 28).to(device)
                 labels = labels.to(device)
-                
+
+                #TODO: check the gradients values, if you make backward of loss1 function
                 loss1 = BRE()
 
+                #TODO: the variable 'outputs' doesn't used further in the code (probably you should put it in loss2 variable)
                 outputs = net(images)
 
-
-                loss2 = nnloss(images,labels)
+                loss2 = nnloss(images, labels)
     
                 loss = loss1 + loss2
 
                 net.zero_grad()
 
-
                 loss.backward()
-                weights_grad = torch.cat(list(Z.grad.view(-1) for Z in list(net.parameters())),dim= 0)
+                weights_grad = torch.cat(list(Z.grad.view(-1) for Z in list(net.parameters())), dim= 0)
                
                 BRE.flat_params.grad += weights_grad
                 BRE.sigma_posterior_.grad += weights_grad * nnloss.noise 
