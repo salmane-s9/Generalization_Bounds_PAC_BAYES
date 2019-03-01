@@ -1,21 +1,40 @@
-
-# coding: utf-8
-
-# In[ ]:
-
-
 import torch
 import torch.nn as nn
 from torch.nn.utils import parameters_to_vector
 from utils import calc_BRE_term,calc_kullback_leibler
 
 
-
-# In[ ]:
-
-
 class PacBayesLoss(nn.Module):
+    """ class for BRE loss (second term in minimization problem).
+    Parameters
+    ----------
+    lambda_prior_ : int Parameter
+        Prior distribution (P(0,λI) variance .
+        
+    sigma_posterior_ : {torch array, Parameter}
+        Posterior distribution N(w,s) variance .
+        
+    params : Neural network parameters
+        Neural network parameters .
+    conf_param : float 
+        confidence parameter .
+    Precision : int 
+        precision parameter for lambda_prior .
+    bound : float 
+       upper bound for lambda_prior .
+    data_size : int 
+        size of training data .  
+        
+    Attributes
+    ----------
     
+    d_size : int
+        Number of NN parameters
+    flat_params : torch array of shape (d_size,)
+        flat array of NN parameters
+    params_0 : torch array of shape (d_size,)
+        mean of Prior distribution .
+    """
     def __init__(self, lambda_prior_ ,sigma_posterior_ , params, conf_param , Precision , 
                  bound , data_size):
         
