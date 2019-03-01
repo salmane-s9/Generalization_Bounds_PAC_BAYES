@@ -14,11 +14,11 @@ def main(test_cuda=False):
     print('-'*80)
     device = torch.device("cuda" if test_cuda else "cpu")
     INPUT_SIZE = 784
-    HIDDEN_SIZE = [300 , 600 , 1200]
+    HIDDEN_SIZE = [300, 600, 1200]
     NUM_CLASSES = 2
 #     We will work with the model ['T-600']
     initial_net = FeedForwardNeuralNet(INPUT_SIZE, HIDDEN_SIZE[1], NUM_CLASSES)
-    net = load_train_weights(initial_net,'SGD_solutions/T-600.ckpt')
+    net = load_train_weights(initial_net, 'SGD_solutions/T-600.ckpt')
     
     train_loader, test_loader = binary_mnist_loader()
     conf_param=0.025 
@@ -26,7 +26,7 @@ def main(test_cuda=False):
     bound=0.1 
     data_size= 55000
     
-    lambda_prior = torch.tensor(-3. ,device=device).requires_grad_()
+    lambda_prior = torch.tensor(-3., device=device).requires_grad_()
     
     sigma_posterior = torch.abs(parameters_to_vector(net.parameters())).requires_grad_()
 
@@ -68,7 +68,7 @@ def main(test_cuda=False):
                 optimizer.zero_grad()
 
 if __name__ == '__main__':
-    torch.manual_seed(500)
+    torch.manual_seed(300)
     main(test_cuda=False)
     if torch.cuda.is_available():
         main(test_cuda=True)
