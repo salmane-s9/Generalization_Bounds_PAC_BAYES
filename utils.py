@@ -5,13 +5,13 @@ import numpy as np
 
 
 
-def calc_kullback_leibler(lambda_prior ,sigma_post ,params , params_0 , d_size):
+def calc_kullback_leibler(lambda_prior, sigma_post, params, params_0, d_size):
     # explicit calculation of KL divergence between prior N(0,lambda * Id) and posterior N(w, s)
 
 #     assert (torch.is_tensor(lambda_prior) and torch.is_tensor(sigma_post) )
-    tr = torch.norm(sigma_post , p=1)/ lambda_prior
+    tr = torch.norm(sigma_post, p=1)/ lambda_prior
     
-    l2 = torch.norm(params -params_0 , p=2)/ lambda_prior
+    l2 = torch.norm(params -params_0, p=2)/ lambda_prior
     d = d_size 
 
     logdet_prior = d * torch.log(lambda_prior)
@@ -22,7 +22,7 @@ def calc_kullback_leibler(lambda_prior ,sigma_post ,params , params_0 , d_size):
 
     return kl
 
-def calc_BRE_term(Precision ,conf_param ,bound ,params , params_0,lambda_prior_ ,sigma_posterior_,data_size,d_size): 
+def calc_BRE_term(Precision, conf_param, bound, params, params_0, lambda_prior_, sigma_posterior_, data_size, d_size): 
 #   Explicit Calculation of the second term of the bound (BRE)
 
     lambda_prior = torch.exp(2 * lambda_prior_ )
@@ -126,7 +126,7 @@ class FeedForwardNeuralNet3R(nn.Module):
 
 
     
-def load_train_weights(model ,weights):
+def load_train_weights(model, weights):
     pretrained_dict = torch.load(weights)
     model_dict = model.state_dict()
 
