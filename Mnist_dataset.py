@@ -1,9 +1,3 @@
-
-# coding: utf-8
-
-# In[11]:
-
-
 import torch
 from torchvision import transforms
 from torch.utils.data.dataset import Dataset
@@ -11,10 +5,6 @@ from torchvision import datasets, transforms
 import numpy as np
 from PIL import Image
 import tensorflow.keras.datasets.mnist as mnist_
-
-
-# In[8]:
-
 
 class CustomMNIST(Dataset):
     def __init__(self, data ,targets, height, width, transform=None):
@@ -47,11 +37,7 @@ class CustomMNIST(Dataset):
     def __len__(self):
         return len(self.data)
 
-
-# In[9]:
-
-
-def alterning_targets(targets,label1_elements,label2_elements):
+def alterning_targets(targets, label1_elements, label2_elements):
     '''
     We Change the classification task :
     We produce a binary classification problem by mapping :
@@ -62,14 +48,9 @@ def alterning_targets(targets,label1_elements,label2_elements):
     new_targets[np.isin(new_targets, label2_elements)] = 1
     
     return new_targets
-
-
-# In[15]:
-
-
 def binary_mnist_loader():
     
-    # Importing Tensorflow Dataset MNIST :
+    # Importing Tensorflow Dataset MNIST and binarizing targets:
     label1_elements = np.arange(0,5)
     label2_elements = np.arange(5,10)
     mnist = mnist_.load_data()
@@ -93,4 +74,4 @@ def binary_mnist_loader():
                                                         batch_size=1,
                                                         shuffle=False)
     
-    return train_loader , test_loader
+    return train_loader, test_loader
