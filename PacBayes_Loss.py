@@ -35,8 +35,8 @@ class PacBayesLoss(nn.Module):
     params_0 : torch array of shape (d_size,)
         mean of Prior distribution .
     """
-    def __init__(self, lambda_prior_ ,sigma_posterior_ , params, conf_param , Precision , 
-                 bound , data_size):
+    def __init__(self, lambda_prior_, sigma_posterior_, params, conf_param, Precision, 
+                 bound, data_size):
         
         super(PacBayesLoss, self).__init__()
         self.lambda_prior_ = nn.Parameter(lambda_prior_)
