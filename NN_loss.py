@@ -3,7 +3,7 @@ import torch.nn as nn
 from utils import network_params
 
 class mnnLoss(nn.Module):
-     """ class for calcuting surrogate loss of the SNN (first term in minimization problem).
+    """ class for calcuting surrogate loss of the SNN (first term in minimization problem).
     Parameters
     ----------
     flat_params : torch array of shape (d_size,)
