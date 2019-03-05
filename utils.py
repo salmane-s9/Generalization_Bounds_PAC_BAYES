@@ -1,46 +1,34 @@
-
-# coding: utf-8
-
-# In[1]:
-
-
 import torch
 import torch.nn as nn
 from math import log,pi
 import numpy as np
 
 
-# In[2]:
 
-
-def calc_kullback_leibler(lambda_prior_ ,sigma_posterior_ ,params , params_0 , d_size):
+def calc_kullback_leibler(lambda_prior, sigma_post, params, params_0, d_size):
     # explicit calculation of KL divergence between prior N(0,lambda * Id) and posterior N(w, s)
 
-    assert (torch.is_tensor(lambda_prior_) and torch.is_tensor(sigma_posterior_) )
-    lambda_prior = torch.exp(2 * lambda_prior_ )
-    sigma_post = torch.exp(2 * sigma_posterior_ )
-
-    tr = torch.sum(sigma_post) / lambda_prior
+#     assert (torch.is_tensor(lambda_prior) and torch.is_tensor(sigma_post) )
+    tr = torch.norm(sigma_post, p=1)/ lambda_prior
     
-    l2 = torch.norm(params -params_0)/ lambda_prior
+    l2 = torch.norm(params -params_0, p=2)/ lambda_prior
     d = d_size 
 
     logdet_prior = d * torch.log(lambda_prior)
-#     sgndetA, logdet_post = torch.slogdet(torch.diag(sigma_post))
-    logdet_post = torch.log(torch.prod(sigma_post,dtype=torch.double)).float()
-#     assert sgndetA == 1.0
+    
+    logdet_post = torch.sum(torch.log(sigma_post))
 
     kl = (tr + l2 - d + logdet_prior - logdet_post ) / 2.
 
     return kl
 
-def calc_BRE_term(Precision ,conf_param ,bound ,params , params_0,lambda_prior_ ,sigma_posterior_,data_size,d_size): 
+def calc_BRE_term(Precision, conf_param, bound, params, params_0, lambda_prior_, sigma_posterior_, data_size, d_size): 
 #   Explicit Calculation of the second term of the bound (BRE)
 
-
-    kl = calc_kullback_leibler(lambda_prior_, sigma_posterior_ ,params , params_0 , d_size)
-    
     lambda_prior = torch.exp(2 * lambda_prior_ )
+    sigma_post = torch.exp(2 * sigma_posterior_ )
+    
+    kl = calc_kullback_leibler(lambda_prior, sigma_post ,params , params_0 , d_size)
     
     assert bound > lambda_prior
     log_log = 2* torch.log(Precision* torch.log(bound /lambda_prior))
@@ -48,7 +36,7 @@ def calc_BRE_term(Precision ,conf_param ,bound ,params , params_0,lambda_prior_ 
     m = data_size
     log_ = log((((pi**2) * m)/(6* conf_param)))
 
-    bre = torch.sqrt((kl + log_log + log_ ) / (2 *(m-1)))
+    bre = torch.sqrt((kl + log_log + log_) / (2 *(m-1)))
 
     return bre
 
@@ -65,9 +53,6 @@ def network_params(model):
             layers.append((name,ind,shape))
         
     return layers
-
-
-# In[3]:
 
 
 class FeedForwardNeuralNet(nn.Module):
@@ -138,10 +123,32 @@ class FeedForwardNeuralNet3R(nn.Module):
     def forward(self, x):
         out = self.main(x)
         return out
-def load_train_weights(model ,weights):
+
+
+    
+def load_train_weights(model, weights):
     pretrained_dict = torch.load(weights)
     model_dict = model.state_dict()
+
     model_dict.update(pretrained_dict)
     model.load_state_dict(model_dict)
     model.state_dict()
     return model
+
+
+def test_error(*, loader, nn_model, device):
+    with torch.no_grad():
+        correct = 0
+        total = 0
+
+        for images, labels in loader:
+            images = images.reshape(-1, 28 * 28).to(device)
+            labels = labels.to(device)
+
+            outputs = nn_model(images)
+            _, predicted = torch.max(outputs.data, 1)
+
+            total += labels.size(0)
+            correct += (predicted == labels.long()).sum().item()
+
+        print('{0:.3f} '.format(1. - correct / total))
