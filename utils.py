@@ -11,7 +11,7 @@ def calc_kullback_leibler(lambda_prior, sigma_post, params, params_0, d_size):
 #     assert (torch.is_tensor(lambda_prior) and torch.is_tensor(sigma_post) )
     tr = torch.norm(sigma_post, p=1)/ lambda_prior
     
-    l2 = torch.norm(params -params_0, p=2)/ lambda_prior
+    l2 = torch.pow(torch.norm(params -params_0, p=2),2)/ lambda_prior
     d = d_size 
 
     logdet_prior = d * torch.log(lambda_prior)
