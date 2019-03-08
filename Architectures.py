@@ -1,13 +1,4 @@
-
-# coding: utf-8
-
-# In[1]:
-
-
 import torch.nn as nn
-
-
-# In[2]:
 
 
 class FeedForwardNeuralNet(nn.Module):
