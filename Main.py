@@ -1,8 +1,5 @@
 import torch
 import torch.nn as nn
-from torch.autograd.function import Function
-from torch.autograd import Variable
-from math import log , pi
 from torch.nn.utils import parameters_to_vector
 from PacBayes_Loss import PacBayesLoss
 from NN_loss import mnnLoss
