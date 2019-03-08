@@ -29,8 +29,7 @@ def calc_BRE_term(Precision, conf_param, bound, params, params_0, lambda_prior_,
     sigma_post = torch.exp(2 * sigma_posterior_ )
     
     kl = calc_kullback_leibler(lambda_prior, sigma_post ,params , params_0 , d_size)
-    
-    assert bound > lambda_prior
+   
     log_log = 2* torch.log(Precision* torch.log(bound /lambda_prior))
 
     m = data_size
@@ -68,64 +67,7 @@ class FeedForwardNeuralNet(nn.Module):
         out = self.relu(out)
         out = self.fc2(out)
         return out
-    
-    
-class FeedForwardNeuralNet2(nn.Module):
-    def __init__(self, input_size, hidden_size, num_classes):
-        super().__init__()
 
-        self.fc1 = nn.Linear(input_size, hidden_size, bias =True)
-        self.relu = nn.ReLU()
-        self.fc2 = nn.Linear(hidden_size, hidden_size, bias =True)
-        self.fc3 = nn.Linear(hidden_size, num_classes, bias =True)
-    def forward(self, x):
-        out = self.fc1(x)
-        out = self.relu(out)
-        out = self.fc2(out)
-        out = self.relu(out)
-        out = self.fc3(out)
-        return out
-
-    
-class FeedForwardNeuralNet3(nn.Module):
-    def __init__(self, input_size, hidden_size, num_classes):
-        super().__init__()
-
-        self.fc1 = nn.Linear(input_size, hidden_size, bias =True)
-        self.relu = nn.ReLU()
-        self.fc2 = nn.Linear(hidden_size, hidden_size, bias =True)
-        self.fc3 = nn.Linear(hidden_size, hidden_size, bias =True)
-        self.fc4 = nn.Linear(hidden_size, num_classes, bias =True)
-
-    def forward(self, x):
-        out = self.fc1(x)
-        out = self.relu(out)
-        out = self.fc2(out)
-        out = self.relu(out)
-        out = self.fc3(out)
-        out = self.relu(out)
-        out = self.fc4(out)
-        return out
-
-
-# Another solution
-class FeedForwardNeuralNet3R(nn.Module):
-    def __init__(self, input_size, hidden_size, num_classes):
-        super().__init__()
-        self.model = nn.Sequential(torch.nn.Linear(input_size, hidden_size, bias =True),
-                                    torch.nn.ReLU(),
-                                    torch.nn.Linear(hidden_size, hidden_size, bias =True),
-                                    torch.nn.ReLU(),
-                                    torch.nn.Linear(hidden_size, hidden_size, bias =True),
-                                    torch.nn.ReLU(),
-                                    torch.nn.Linear(hidden_size, num_classes, bias =True),
-                                    )
-    def forward(self, x):
-        out = self.main(x)
-        return out
-
-
-    
 def load_train_weights(model, weights):
     pretrained_dict = torch.load(weights)
     model_dict = model.state_dict()
