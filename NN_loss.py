@@ -18,8 +18,8 @@ class mnnLoss(nn.Module):
     def __init__(self, criterion, flat_params, sigma_posterior_, model, d_size):
         
         super(mnnLoss, self).__init__()
-        self.sigma_posterior_ = sigma_posterior_
-        self.flat_params = flat_params
+        self.sigma_posterior_ = nn.Parameter(sigma_posterior_)
+        self.flat_params = nn.Parameter(flat_params)
         self.d_size = d_size
         self.model = model
         self.criterion = criterion
