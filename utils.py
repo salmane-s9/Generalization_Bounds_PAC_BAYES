@@ -53,21 +53,6 @@ def network_params(model):
         
     return layers
 
-
-class FeedForwardNeuralNet(nn.Module):
-    def __init__(self, input_size, hidden_size, num_classes):
-        super().__init__()
-
-        self.fc1 = nn.Linear(input_size, hidden_size, bias =True)
-        self.relu = nn.ReLU()
-        self.fc2 = nn.Linear(hidden_size, num_classes, bias =True)
-        
-    def forward(self, x):
-        out = self.fc1(x)
-        out = self.relu(out)
-        out = self.fc2(out)
-        return out
-
 def load_train_weights(model, weights):
     pretrained_dict = torch.load(weights)
     model_dict = model.state_dict()
