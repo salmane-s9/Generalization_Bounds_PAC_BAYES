@@ -64,7 +64,7 @@ def binary_mnist_loader():
                                  transformations)
     train_loader = torch.utils.data.DataLoader(dataset=custom_mnist_train,
                                                         batch_size=1,
-                                                        shuffle=True)
+                                                        shuffle=False)
 
     # testing data and loader
     custom_mnist_test =         CustomMNIST(x_test,y_test,
