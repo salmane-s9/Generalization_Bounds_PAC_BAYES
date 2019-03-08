@@ -25,7 +25,7 @@ def calc_kullback_leibler(lambda_prior, sigma_post, params, params_0, d_size):
 def calc_BRE_term(Precision, conf_param, bound, params, params_0, lambda_prior_, sigma_posterior_, data_size, d_size): 
 #   Explicit Calculation of the second term of the bound (BRE)
 
-    lambda_prior = torch.exp(2 * lambda_prior_ )
+    lambda_prior = torch.clamp(torch.exp(2 * lambda_prior_ ), min = 0, max = bound)
     sigma_post = torch.exp(2 * sigma_posterior_ )
     
     kl = calc_kullback_leibler(lambda_prior, sigma_post ,params , params_0 , d_size)
