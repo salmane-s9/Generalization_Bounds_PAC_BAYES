@@ -31,8 +31,6 @@ def main(test_cuda=False):
     
     lambda_prior = torch.tensor(-3. ,device=device).requires_grad_()
     sigma_posterior = torch.abs(parameters_to_vector(net.parameters())).requires_grad_()
-#     d = sum(p.numel() for p in net.parameters() if p.requires_grad)
-#     sigma_posterior = torch.tensor([-3.]*d)
     BRE = PacBayesLoss(lambda_prior, sigma_posterior, net, conf_param, Precision, bound, 
                       data_size).to(device)
     
@@ -40,8 +38,7 @@ def main(test_cuda=False):
     criterion  = nn.CrossEntropyLoss()
     nnloss = mnnLoss(criterion, BRE.flat_params, BRE.sigma_posterior_ , net , BRE.d_size)
     epochs = 2
-#     norm_change = []
-#     initial_weights = parameters_to_vector(net.parameters())
+    
     for epoch in np.arange(1,epochs): 
         print(" \n Epoch {} :  ".format(epoch), end="\n")
         
@@ -63,8 +60,6 @@ def main(test_cuda=False):
 
                 net.zero_grad()
                 loss.backward(retain_graph=True)
-#                 print(BRE.lambda_prior_.grad)
-#                 print(list(Z.grad for Z in list(net.parameters())))
                 weights_grad = torch.cat(list(Z.grad.view(-1) for Z in list(net.parameters())), dim=0)
     
                 BRE.flat_params.grad += weights_grad
@@ -73,10 +68,6 @@ def main(test_cuda=False):
                 optimizer.step()
                 optimizer.zero_grad()
                 
-#                 norm_change.append(torch.norm(BRE.flat_params - initial_weights,p=2))
-#                 print(norm_change)
-#     plt.figure(figsize=(16,10), dpi= 80)
-#     plt.plot(range(501), norm_change, color='tab:red')
                 
 if __name__ == '__main__':
     torch.manual_seed(300)
