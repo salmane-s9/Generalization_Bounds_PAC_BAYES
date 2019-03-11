@@ -62,7 +62,6 @@ class PacBayesLoss(nn.Module):
     def compute_bound(self, train_loader, delta_prime, n_mtcarlo_approx, device):
         """
          Returns:
-         
             SNN_train_error : upper bound on the train error of the Stochastic neural network by application of Theorem of
                               the sample convergence bound
             final_bound : Final Pac Bayes bound by application of Paper theorem on SNN_train_error 
