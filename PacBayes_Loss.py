@@ -1,7 +1,8 @@
 import torch
 import torch.nn as nn
 from torch.nn.utils import parameters_to_vector
-from utils import calc_BRE_term,calc_kullback_leibler
+from utils import calc_BRE_term,calc_kullback_leibler,apply_weights,test_error,solve_kl_sup
+from math import log
 
 
 class PacBayesLoss(nn.Module):
@@ -14,8 +15,8 @@ class PacBayesLoss(nn.Module):
     sigma_posterior_ : {torch array, Parameter}
         Posterior distribution N(w,s) variance .
         
-    params : Neural network parameters
-        Neural network parameters .
+    net : Neural network model
+        Feed Forward model .
     conf_param : float 
         confidence parameter .
     Precision : int 
@@ -35,14 +36,15 @@ class PacBayesLoss(nn.Module):
     params_0 : torch array of shape (d_size,)
         mean of Prior distribution .
     """
-    def __init__(self, lambda_prior_, sigma_posterior_, params, conf_param, Precision, 
+    def __init__(self, lambda_prior_, sigma_posterior_, net, conf_param, Precision, 
                  bound, data_size):
         
         super(PacBayesLoss, self).__init__()
         self.lambda_prior_ = nn.Parameter(lambda_prior_)
         self.sigma_posterior_ = nn.Parameter(sigma_posterior_)
-        self.params = params.parameters()
-        self.flat_params = nn.Parameter(parameters_to_vector(params.parameters()))
+        self.model = net
+        self.params = net.parameters()
+        self.flat_params = nn.Parameter(parameters_to_vector(net.parameters()))
         self.precision = Precision
         self.conf_param = conf_param
         self.bound = bound
@@ -55,7 +57,46 @@ class PacBayesLoss(nn.Module):
         Bre_loss = calc_BRE_term(self.precision, self.conf_param, self.bound, self.flat_params, 
                                  self.params_0, self.lambda_prior_, self.sigma_posterior_, 
                                  self.data_size, self.d_size)
-        
-        
         return Bre_loss
+    
+    def compute_bound(self, train_loader, delta_prime, n_mtcarlo_approx, device):
+        """
+         Returns:
+         
+            SNN_train_error : upper bound on the train error of the Stochastic neural network by application of Theorem of the sample                                     convergence bound
+            final_bound : Final Pac Bayes bound by application of Paper theorem on SNN_train_error 
+        """
+        SNN_train_error = self.SNN_error(train_loader, delta_prime, n_mtcarlo_approx, device) 
+        
+        j_round = torch.round(self.precision * (log(self.bound) - (2* self.lambda_prior_)))
+        lambda_prior_ = 0.5 * (log(self.bound)- (j_round/self.precision)).clone().detach()
+
+        Bre_loss = calc_BRE_term(self.precision, self.conf_param, self.bound, self.flat_params, 
+                                 self.params_0, lambda_prior_, self.sigma_posterior_, 
+                                 self.data_size, self.d_size)
+        
+        final_bound = solve_kl_sup(SNN_train_error, Bre_loss)
+        
+        return SNN_train_error, final_bound
+    
+    def sample_weights(self):
+        
+        """
+       Sample a copy of flat parameters of the network with noise corresponding to the variance of the posterior
+        """
+        return self.flat_params + torch.randn(self.d_size) * torch.exp(self.sigma_posterior_)
+    
+    def SNN_error(self, loader, delta_prime, n_mtcarlo_approx, device):
+        """
+      Compute upper bound on the error of the Stochastic neural network by application of Theorem of the sample convergence bound 
+        """
+        samples_errors = torch.zeros(n_mtcarlo_approx)
+        
+        for i in range(n_mtcarlo_approx):
+            nn_model = apply_weights(self.model, self.sample_weights())
+            samples_errors[i] = test_error(loader, nn_model, device)
+        
+        SNN_error = solve_kl_sup(torch.mean(samples_errors),(log(2/delta_prime)/n_mtcarlo_approx))
+        
+        return SNN_error
 
