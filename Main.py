@@ -64,11 +64,11 @@ def main(test_cuda=False):
             loss = BRE() + nnloss(images,labels)
 
             if (((100 * i // BRE.data_size) - (100 * (i-1)// BRE.data_size))!=0 and i!=0): 
-
                 print('\t Mean loss : {} \r'.format(sum(mean_losses)/len(mean_losses)))
                 mean_losses = []
             else :
                 mean_losses.append(loss.item())
+                
             net.zero_grad()
             loss.backward(retain_graph=True)
 
