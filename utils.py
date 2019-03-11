@@ -2,11 +2,9 @@ import torch
 import torch.nn as nn
 from math import log,pi
 import numpy as np
-
-
+from scipy import optimize
 
 def calc_kullback_leibler(lambda_prior ,sigma_post ,params , params_0 , d_size):
-    
     """
     explicit calculation of KL divergence between prior N(0,lambda_prior * Id) and posterior N(flat_params, sigma_posterior_)
     """
