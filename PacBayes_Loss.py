@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 from torch.nn.utils import parameters_to_vector
-from utils import calc_BRE_term,calc_kullback_leibler,apply_weights,test_error,solve_kl_sup
+from utils import calc_BRE_term, calc_kullback_leibler, apply_weights, test_error, solve_kl_sup
 from math import log
 
 
@@ -79,8 +79,7 @@ class PacBayesLoss(nn.Module):
         
         return SNN_train_error, final_bound
     
-    def sample_weights(self):
-        
+    def sample_weights(self):      
         """
        Sample a copy of flat parameters of the network with noise corresponding to the variance of the posterior
         """
@@ -96,7 +95,7 @@ class PacBayesLoss(nn.Module):
             nn_model = apply_weights(self.model, self.sample_weights())
             samples_errors[i] = test_error(loader, nn_model, device)
         
-        SNN_error = solve_kl_sup(torch.mean(samples_errors),(log(2/delta_prime)/n_mtcarlo_approx))
+        SNN_error = solve_kl_sup(torch.mean(samples_errors), (log(2/delta_prime)/n_mtcarlo_approx))
         
         return SNN_error
 
