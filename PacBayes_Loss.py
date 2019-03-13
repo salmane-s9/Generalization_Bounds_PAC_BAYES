@@ -81,7 +81,7 @@ class PacBayesLoss(nn.Module):
     
     def sample_weights(self):      
         """
-       Sample a copy of flat parameters of the network with noise corresponding to the variance of the posterior
+       Sample weights from the posterior distribution Q(flat_params, Sigma_posterior)
         """
         return self.flat_params + torch.randn(self.d_size) * torch.exp(self.sigma_posterior_)
     
