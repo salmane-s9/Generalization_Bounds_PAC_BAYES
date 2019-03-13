@@ -17,7 +17,7 @@ def calc_kullback_leibler(lambda_prior, sigma_post, params, params_0, d_size):
 
     logdet_prior = d * torch.log(lambda_prior)
     
-    logdet_post = torch.sum(sigma_post)
+    logdet_post = 2 * torch.sum(sigma_post)
 
     kl = (tr + l2 - d + logdet_prior - logdet_post ) / 2.
 
