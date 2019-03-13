@@ -39,7 +39,7 @@ def main(test_cuda=False, weight_path=None):
     sigma_posterior = torch.abs(parameters_to_vector(net.parameters())).requires_grad_()
 
     flat_params = parameters_to_vector(net.parameters())
-    BRE = PacBayesLoss(lambda_prior, sigma_posterior, flat_params, conf_param, Precision, bound, data_size).to(device)
+    BRE = PacBayesLoss(lambda_prior, sigma_posterior, net, flat_params, conf_param, Precision, bound, data_size).to(device)
 
     optimizer = torch.optim.RMSprop(BRE.parameters(), lr=learning_rate, alpha=0.9)
     criterion = nn.CrossEntropyLoss()
@@ -62,14 +62,6 @@ def main(test_cuda=False, weight_path=None):
             images = images.reshape(-1, 28 * 28).to(device)
             labels = labels.to(device)
 
-            print("Epoch {}".format(epoch))
-            for name, weights in BRE.named_parameters():
-                print(name)
-                print(weights)
-                # if name is "flat_params":
-                #     print(name)
-                #     print(weights[:5])
-
             loss = BRE() + nnloss(images, labels)
 
             if (((100 * i // BRE.data_size) - (100 * (i-1) // BRE.data_size)) != 0 and i!=0): 
@@ -88,15 +80,8 @@ def main(test_cuda=False, weight_path=None):
             optimizer.step()
             optimizer.zero_grad()
 
-            print("After weights update")
-            for name, weights in BRE.named_parameters():
-                print(name)
-                print(weights)
-                # if name is "model.fc1.weight":
-                #     print(name)
-                #     print(weights[:5])
+        snn_train_error, Pac_bound = BRE.compute_bound(train_loader, delta_prime, n_mtcarlo_approx, device)   
 
-        snn_train_error, Pac_bound = BRE.compute_bound(train_loader, delta_prime, n_mtcarlo_approx, device)     
         snn_test_error = BRE.SNN_error(test_loader, delta_prime, n_mtcarlo_approx, device)
 
         print('\n Epoch {} Finished \t SNN_Train Error: {:.4f}\t SNN_Test Error: {:.4f} \t PAC-bayes Bound: {:.4f}\r'.format(epoch, snn_train_error,

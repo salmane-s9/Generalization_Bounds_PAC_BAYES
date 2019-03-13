@@ -95,15 +95,21 @@ def test_error(loader, nn_model, device):
         return(error)
     
     
-def apply_weights(model, modified_parameters):
+def apply_weights(model, modified_parameters, net_params):
     """
     Modify the parameters of a neural network 
     """
     indi = 0
-    for name, ind, shape_ in network_params(model):
+    for name, ind, shape_ in net_params:
         model.state_dict()[name].data.copy_(modified_parameters[indi:indi+ind].view(shape_)) 
         indi += ind
     return(model)
+
+
+def print_weights(model):
+    for name, weights in model.named_parameters():
+        print(name)
+        print(weights)
 
 
 def KL(Q, P):

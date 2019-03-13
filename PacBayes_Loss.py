@@ -1,7 +1,8 @@
 import torch
 import torch.nn as nn
 from torch.nn.utils import parameters_to_vector
-from utils import calc_BRE_term, calc_kullback_leibler, apply_weights, test_error, solve_kl_sup
+from utils import *
+# from utils import calc_BRE_term, calc_kullback_leibler, apply_weights, test_error, solve_kl_sup
 from math import log
 
 
@@ -36,7 +37,7 @@ class PacBayesLoss(nn.Module):
     params_0 : torch array of shape (d_size,)
         mean of Prior distribution .
     """
-    def __init__(self, lambda_prior_, sigma_posterior_, flat_params, conf_param, Precision, 
+    def __init__(self, lambda_prior_, sigma_posterior_, net, flat_params, conf_param, Precision, 
                  bound, data_size):
         
         super(PacBayesLoss, self).__init__()
@@ -58,6 +59,7 @@ class PacBayesLoss(nn.Module):
                                  self.data_size, self.d_size)
         return Bre_loss
     
+
     def compute_bound(self, train_loader, delta_prime, n_mtcarlo_approx, device):
         """
          Returns:
@@ -88,13 +90,14 @@ class PacBayesLoss(nn.Module):
         """
       Compute upper bound on the error of the Stochastic neural network by application of Theorem of the sample convergence bound 
         """
-        samples_errors = torch.zeros(n_mtcarlo_approx)
+        samples_errors = 0.
+        net_params = network_params(self.model)
         
         for i in range(n_mtcarlo_approx):
-            nn_model = apply_weights(self.model, self.sample_weights())
-            samples_errors[i] = test_error(loader, nn_model, device)
-        
-        SNN_error = solve_kl_sup(torch.mean(samples_errors), (log(2/delta_prime)/n_mtcarlo_approx))
+            nn_model = apply_weights(self.model, self.sample_weights(), net_params)
+            samples_errors += test_error(loader, nn_model, device)
+
+        SNN_error = solve_kl_sup(samples_errors/n_mtcarlo_approx, (log(2/delta_prime)/n_mtcarlo_approx))
         
         return SNN_error
 
