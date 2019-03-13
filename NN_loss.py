@@ -30,7 +30,7 @@ class mnnLoss(nn.Module):
         indi = 0
         for name, ind, shape_ in network_params(self.model):
             self.model.state_dict()[name].data.copy_(modified_parameters[indi:indi+ind].view(shape_)) 
-            indi = ind
+            indi += ind
             
         outputs = self.model(images)
         loss = self.criterion(outputs.float(), labels.long())
