@@ -68,7 +68,7 @@ class PacBayesLoss(nn.Module):
         """
         SNN_train_error = self.SNN_error(train_loader, delta_prime, n_mtcarlo_approx, device) 
         
-        j_round = torch.round(self.precision * (log(self.bound) - (2* self.lambda_prior_)))
+        j_round = torch.round(self.precision * (log(self.bound) - (2 * self.lambda_prior_)))
         lambda_prior_ = 0.5 * (log(self.bound)- (j_round/self.precision)).clone().detach()
 
         Bre_loss = calc_BRE_term(self.precision, self.conf_param, self.bound, self.flat_params, 

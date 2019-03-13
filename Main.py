@@ -7,6 +7,7 @@ from utils import *
 from Mnist_dataset import binary_mnist_loader
 from Architectures import * 
 
+
 def main(test_cuda=False, weight_path=None):
 
     print('-'*80)
@@ -45,7 +46,6 @@ def main(test_cuda=False, weight_path=None):
     epochs = 4
 
     mean_losses = []
-    
     for epoch in np.arange(1, epochs+1):   
         print(" \n Epoch {} :  ".format(epoch), end="\n")
         if (epoch == 4): 
@@ -91,4 +91,3 @@ if __name__ == '__main__':
         main(test_cuda=True)
     else:
         main(test_cuda=False)
-    
