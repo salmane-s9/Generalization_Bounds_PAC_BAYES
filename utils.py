@@ -10,14 +10,14 @@ def calc_kullback_leibler(lambda_prior, sigma_post, params, params_0, d_size):
     explicit calculation of KL divergence between prior N(0,lambda_prior * Id) and posterior N(flat_params, sigma_posterior_)
     """
     
-    tr = torch.norm(sigma_post, p=1) / lambda_prior
+    tr = torch.norm(torch.exp(2 * sigma_post), p=1) / lambda_prior
     
     l2 = torch.pow(torch.norm(params -params_0, p=2), 2) / lambda_prior
     d = d_size 
 
     logdet_prior = d * torch.log(lambda_prior)
     
-    logdet_post = torch.sum(torch.log(sigma_post))
+    logdet_post = torch.sum(sigma_post)
 
     kl = (tr + l2 - d + logdet_prior - logdet_post ) / 2.
 
@@ -30,9 +30,8 @@ def calc_BRE_term(Precision, conf_param, bound, params, params_0, lambda_prior_,
     """
 
     lambda_prior = torch.clamp(torch.exp(2 * lambda_prior_ ), min = 1e-38, max = bound - 1e-8)
-    sigma_post = torch.exp(2 * sigma_posterior_)
     
-    kl = calc_kullback_leibler(lambda_prior, sigma_post, params, params_0, d_size)
+    kl = calc_kullback_leibler(lambda_prior, sigma_posterior_, params, params_0, d_size)
     
     log_log = 2 * torch.log(Precision * (torch.log(bound / lambda_prior)))
 
