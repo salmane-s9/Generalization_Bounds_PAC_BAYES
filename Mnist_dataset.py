@@ -61,7 +61,7 @@ def binary_mnist_loader(batch_size, shuffle, random_labels=False):
         x_train , y_train = x_train[:55000] , alterning_targets(y_train,label1_elements,label2_elements)[:55000]
         x_test , y_test = x_test , alterning_targets(y_test,label1_elements,label2_elements)
     else:
-        with open('\SGD_solutions\Random_labels.pickle', 'rb') as handle:
+        with open('.\SGD_solutions\Random_labels.pickle', 'rb') as handle:
             target = pickle.load(handle)
         x_train , y_train = x_train[:55000] , target[:55000]
         x_test , y_test = x_test , target[55000:]

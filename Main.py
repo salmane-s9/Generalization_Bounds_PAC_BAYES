@@ -25,7 +25,7 @@ def main(test_cuda=False, weight_path=None):
     else:
         net = initial_net
 
-    train_loader, test_loader = binary_mnist_loader(batch_size=BATCH_SIZE, shuffle=False)
+    train_loader, test_loader = binary_mnist_loader(batch_size=BATCH_SIZE, shuffle=False, random_labels=False)
 
     conf_param = 0.025 
     Precision = 100 
