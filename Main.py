@@ -74,7 +74,7 @@ def main(test_cuda=False, weight_path=None):
             net.zero_grad()
             loss.backward(retain_graph=True)
 
-            weights_grad = torch.cat(list(Z.grad.view(-1) for Z in list(net.parameters())), dim=0)
+            weights_grad = torch.cat(list(Z.grad.view(-1) for Z in list(nnloss.model.parameters())), dim=0)
             BRE.flat_params.grad += weights_grad
             BRE.sigma_posterior_.grad += weights_grad * nnloss.noise 
 
