@@ -4,6 +4,7 @@ from torch.nn.utils import parameters_to_vector
 from utils import *
 # from utils import calc_BRE_term, calc_kullback_leibler, apply_weights, test_error, solve_kl_sup
 from math import log
+import copy
 
 
 class PacBayesLoss(nn.Module):
@@ -42,7 +43,7 @@ class PacBayesLoss(nn.Module):
         
         super(PacBayesLoss, self).__init__()
         self.device = device
-        self.model = net.to(self.device)
+        self.model = copy.deepcopy(net).to(self.device)
         self.lambda_prior_ = nn.Parameter(lambda_prior_)
         self.sigma_posterior_ = nn.Parameter(sigma_posterior_)
         self.flat_params = nn.Parameter(flat_params)
@@ -52,7 +53,8 @@ class PacBayesLoss(nn.Module):
         self.data_size = data_size
         self.params_0 = torch.randn(self.flat_params.size()).to(self.device)
         self.d_size = flat_params.size()[0]
-       
+        for p in self.model.parameters():
+                p.requires_grad = False
         
     def forward(self):
         Bre_loss = calc_BRE_term(self.precision, self.conf_param, self.bound, self.flat_params, 

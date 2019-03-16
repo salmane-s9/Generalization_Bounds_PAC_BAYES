@@ -42,7 +42,7 @@ def main(test_cuda=False, weight_path=None):
     flat_params = parameters_to_vector(net.parameters())
     BRE = PacBayesLoss(lambda_prior, sigma_posterior, net, flat_params, conf_param, Precision, bound, data_size, device).to(device)
 
-    optimizer = torch.optim.RMSprop(BRE.parameters(), lr=learning_rate, alpha=0.9)
+    optimizer = torch.optim.RMSprop(filter(lambda p: p.requires_grad, BRE.parameters()), lr=learning_rate, alpha=0.9)
     criterion = nn.CrossEntropyLoss()
     nnloss = mnnLoss(criterion, BRE.flat_params, BRE.sigma_posterior_, net, BRE.d_size, device)
     epochs = 1
