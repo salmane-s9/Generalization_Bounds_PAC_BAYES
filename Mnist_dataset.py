@@ -67,7 +67,7 @@ def binary_mnist_loader(batch_size, shuffle, random_labels=False):
         x_test , y_test = x_test , target[55000:]
 
     transformations = transforms.Compose([transforms.ToTensor()])
-    custom_mnist_train =CustomMNIST(x_train, y_train, 28, 28, transformations)
+    custom_mnist_train = CustomMNIST(x_train, y_train, 28, 28, transformations)
     train_loader = torch.utils.data.DataLoader(dataset=custom_mnist_train,
                                                         batch_size=batch_size,
                                                         shuffle=shuffle)
