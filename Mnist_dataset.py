@@ -5,6 +5,7 @@ from torchvision import datasets, transforms
 import numpy as np
 from PIL import Image
 import tensorflow.keras.datasets.mnist as mnist_
+import pickle
 
 class CustomMNIST(Dataset):
     def __init__(self, data ,targets, height, width, transform=None):
@@ -48,28 +49,31 @@ def alterning_targets(targets, label1_elements, label2_elements):
     new_targets[np.isin(new_targets, label2_elements)] = 1
     
     return new_targets
-def binary_mnist_loader(batch_size, shuffle):
+def binary_mnist_loader(batch_size, shuffle, random_labels=False):
     
     # Importing Tensorflow Dataset MNIST and binarizing targets:
     label1_elements = np.arange(0,5)
     label2_elements = np.arange(5,10)
     mnist = mnist_.load_data()
     (x_train, y_train), (x_test, y_test) = mnist
-    x_train , y_train = x_train[:55000] , alterning_targets(y_train,label1_elements,label2_elements)[:55000]
-    x_test , y_test = x_test , alterning_targets(y_test,label1_elements,label2_elements)
+
+    if (random_labels==False): 
+        x_train , y_train = x_train[:55000] , alterning_targets(y_train,label1_elements,label2_elements)[:55000]
+        x_test , y_test = x_test , alterning_targets(y_test,label1_elements,label2_elements)
+    else:
+        with open('\SGD_solutions\Random_labels.pickle', 'rb') as handle:
+            target = pickle.load(handle)
+        x_train , y_train = x_train[:55000] , target[:55000]
+        x_test , y_test = x_test , target[55000:]
 
     transformations = transforms.Compose([transforms.ToTensor()])
-    custom_mnist_train =         CustomMNIST(x_train,y_train,
-                                 28, 28,
-                                 transformations)
+    custom_mnist_train =CustomMNIST(x_train, y_train, 28, 28, transformations)
     train_loader = torch.utils.data.DataLoader(dataset=custom_mnist_train,
                                                         batch_size=batch_size,
                                                         shuffle=shuffle)
 
     # testing data and loader
-    custom_mnist_test =         CustomMNIST(x_test,y_test,
-                                 28, 28,
-                                 transformations)
+    custom_mnist_test = CustomMNIST(x_test, y_test, 28, 28, transformations)
     test_loader = torch.utils.data.DataLoader(dataset=custom_mnist_test,
                                                         batch_size=1,
                                                         shuffle=False)
