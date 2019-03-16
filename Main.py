@@ -15,6 +15,7 @@ def main(test_cuda=False, weight_path=None):
     INPUT_SIZE = 784
     HIDDEN_SIZE = [300, 600, 1200]
     NUM_CLASSES = 2
+    BATCH_SIZE = 1
 
     # Define the model of a network which weight we will optimize
     initial_net = FeedForwardNeuralNet(INPUT_SIZE, HIDDEN_SIZE[1], NUM_CLASSES)
@@ -24,7 +25,7 @@ def main(test_cuda=False, weight_path=None):
     else:
         net = initial_net
 
-    train_loader, test_loader = binary_mnist_loader()
+    train_loader, test_loader = binary_mnist_loader(batch_size=BATCH_SIZE, shuffle=False)
 
     conf_param = 0.025 
     Precision = 100 
@@ -36,14 +37,14 @@ def main(test_cuda=False, weight_path=None):
     learning_rate = 0.001
 
     lambda_prior = torch.tensor(-3., device=device).requires_grad_()
-    sigma_posterior = torch.abs(parameters_to_vector(net.parameters())).requires_grad_()
+    sigma_posterior = torch.abs(parameters_to_vector(net.parameters())).to(device).requires_grad_()
 
     flat_params = parameters_to_vector(net.parameters())
-    BRE = PacBayesLoss(lambda_prior, sigma_posterior, net, flat_params, conf_param, Precision, bound, data_size).to(device)
+    BRE = PacBayesLoss(lambda_prior, sigma_posterior, net, flat_params, conf_param, Precision, bound, data_size, device).to(device)
 
     optimizer = torch.optim.RMSprop(BRE.parameters(), lr=learning_rate, alpha=0.9)
     criterion = nn.CrossEntropyLoss()
-    nnloss = mnnLoss(criterion, BRE.flat_params, BRE.sigma_posterior_, net, BRE.d_size)
+    nnloss = mnnLoss(criterion, BRE.flat_params, BRE.sigma_posterior_, net, BRE.d_size, device)
     epochs = 1
 
     mean_losses = []
@@ -55,8 +56,8 @@ def main(test_cuda=False, weight_path=None):
                 param_group['lr'] = learning_rate/10
             
         for i, (images, labels) in enumerate(train_loader):
-            if i > 1:
-                break
+            # if i > 1:
+            #     break
             print("\r Progress: {}%".format(100 * i // BRE.data_size), end="")
 
             images = images.reshape(-1, 28 * 28).to(device)

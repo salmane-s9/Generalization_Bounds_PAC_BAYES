@@ -48,7 +48,7 @@ def alterning_targets(targets, label1_elements, label2_elements):
     new_targets[np.isin(new_targets, label2_elements)] = 1
     
     return new_targets
-def binary_mnist_loader():
+def binary_mnist_loader(batch_size, shuffle):
     
     # Importing Tensorflow Dataset MNIST and binarizing targets:
     label1_elements = np.arange(0,5)
@@ -63,8 +63,8 @@ def binary_mnist_loader():
                                  28, 28,
                                  transformations)
     train_loader = torch.utils.data.DataLoader(dataset=custom_mnist_train,
-                                                        batch_size=1,
-                                                        shuffle=False)
+                                                        batch_size=batch_size,
+                                                        shuffle=shuffle)
 
     # testing data and loader
     custom_mnist_test =         CustomMNIST(x_test,y_test,

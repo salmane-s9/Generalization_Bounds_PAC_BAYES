@@ -15,17 +15,18 @@ class mnnLoss(nn.Module):
     d_size : int
         Number of NN parameters  
     """
-    def __init__(self, criterion, flat_params, sigma_posterior_, model, d_size):
+    def __init__(self, criterion, flat_params, sigma_posterior_, model, d_size, device):
         
         super(mnnLoss, self).__init__()
-        self.sigma_posterior_ = nn.Parameter(sigma_posterior_)
-        self.flat_params = nn.Parameter(flat_params)
+        self.sigma_posterior_ = nn.Parameter(sigma_posterior_).to(device)
+        self.flat_params = nn.Parameter(flat_params).to(device)
         self.d_size = d_size
-        self.model = model
-        self.criterion = criterion
+        self.model = model.to(device)
+        self.criterion = criterion.to(device)
+        self.device = device
     
     def forward(self, images, labels):
-        self.noise = torch.randn(self.d_size) * torch.exp(self.sigma_posterior_)
+        self.noise = torch.randn(self.d_size).to(self.device) * torch.exp(self.sigma_posterior_)
         modified_parameters = self.flat_params + self.noise
         indi = 0
         for name, ind, shape_ in network_params(self.model):
