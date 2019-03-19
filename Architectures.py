@@ -24,6 +24,7 @@ class FeedForwardNeuralNet2(nn.Module):
         self.relu = nn.ReLU()
         self.fc2 = nn.Linear(hidden_size, hidden_size, bias=True)
         self.fc3 = nn.Linear(hidden_size, num_classes, bias=True)
+        
     def forward(self, x):
         out = self.fc1(x)
         out = self.relu(out)
