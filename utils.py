@@ -53,7 +53,7 @@ def network_params(model):
     for name, param in model.named_parameters():
         if param.requires_grad:
             shape = model.state_dict()[name].shape
-            params = np.ravel(param.data.numpy())
+            params = np.ravel(param.data.cpu().numpy())
             ind2 = np.size(params)
             ind = ind2
             layers.append((name, ind, shape))
