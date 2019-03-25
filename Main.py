@@ -112,10 +112,13 @@ def main(model_name, test_cuda=False):
     with open('./PAC_solutions/'+ str(model_name) +'_BRE_lambda_prior.pickle', 'wb') as handle:
         pickle.dump(BRE.lambda_prior_, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
-
-    snn_train_error, Pac_bound = BRE.compute_bound(train_loader, delta_prime, n_mtcarlo_approx)   
+    print("\n==> Calculating SNN train error and PAC Bayes bound :" , end='\t')
+    snn_train_error, Pac_bound = BRE.compute_bound(train_loader, delta_prime, n_mtcarlo_approx) 
+    print("Done")
+    print("\n==> Calculating SNN test error :" , end='\t')
     snn_test_error = BRE.SNN_error(test_loader, delta_prime, n_mtcarlo_approx)
-
+    print("Done")
+    
     print('\n Epoch {} Finished \t SNN_Train Error: {:.4f}\t SNN_Test Error: {:.4f} \t PAC-bayes Bound: {:.4f}\r'.format(epoch, snn_train_error,
                 snn_test_error, Pac_bound))
     
