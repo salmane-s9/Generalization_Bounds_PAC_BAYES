@@ -18,7 +18,7 @@ def main(model_name, test_cuda=False):
     INPUT_SIZE = 784
     NUM_CLASSES = 2
     if (model_name[1]=='-'): 
-        NB_LAYERS , HIDDEN_SIZE = 1 , int(model_name[2:])
+        NB_LAYERS, HIDDEN_SIZE=1, int(model_name[2:])
     else:
         NB_LAYERS, HIDDEN_SIZE = int(model_name[1]), int(model_name[3:])
     
@@ -28,12 +28,11 @@ def main(model_name, test_cuda=False):
     NUM_EPOCHS = 20 if model_name[0]=='T' else 100
     BATCH_SIZE = 100
 
-    # Define the model of a network which weight we will optimize
+    # Define the model of a network which weights we will optimize
     initial_net = create_network(NB_LAYERS, INPUT_SIZE, HIDDEN_SIZE, NUM_CLASSES)
     
     weight_path = 'SGD_solutions/{}.ckpt'.format(model_name)
     
-
     if os.path.isfile(weight_path):
         net = load_train_weights(initial_net, weight_path)
     else:
@@ -52,7 +51,7 @@ def main(model_name, test_cuda=False):
     bound = 0.1 
     data_size = 55000
     # n_mtcarlo_approx = 150000
-    n_mtcarlo_approx = 200
+    n_mtcarlo_approx = 150
     delta_prime = 0.01
     learning_rate = 0.001
 
@@ -86,7 +85,7 @@ def main(model_name, test_cuda=False):
 
             loss = BRE() + nnloss(images, labels)
 
-            if (((100 * i // BRE.data_size) - (100 * (i-1) // BRE.data_size)) != 0 and i!=0): 
+            if (((100 * i // BRE.data_size) - (100 * (i-1) // BRE.data_size)) != 0 and i != 0): 
                 print('\t Mean loss : {} \r'.format(sum(mean_losses)/len(mean_losses)))
                 mean_losses = []
             else:
@@ -104,19 +103,19 @@ def main(model_name, test_cuda=False):
     
     print("\n==> Optimization done ")
     print("\n==> Saving Parameters... ")
-    with open('./PAC_solutions/'+ str(model_name) +'_BRE_flat_params.pickle', 'wb') as handle:
+    with open('./PAC_solutions/' + str(model_name) + '_BRE_flat_params.pickle', 'wb') as handle:
         pickle.dump(BRE.flat_params, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
-    with open('./PAC_solutions/'+ str(model_name) +'_BRE_sigma_posterior.pickle', 'wb') as handle:
+    with open('./PAC_solutions/' + str(model_name) + '_BRE_sigma_posterior.pickle', 'wb') as handle:
         pickle.dump(BRE.sigma_posterior_, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
-    with open('./PAC_solutions/'+ str(model_name) +'_BRE_lambda_prior.pickle', 'wb') as handle:
+    with open('./PAC_solutions/' + str(model_name) + '_BRE_lambda_prior.pickle', 'wb') as handle:
         pickle.dump(BRE.lambda_prior_, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
-    print("\n==> Calculating SNN train error and PAC Bayes bound :" , end='\t')
+    print("\n==> Calculating SNN train error and PAC Bayes bound :", end='\t')
     snn_train_error, Pac_bound = BRE.compute_bound(train_loader, delta_prime, n_mtcarlo_approx) 
     print("Done")
-    print("\n==> Calculating SNN test error :" , end='\t')
+    print("\n==> Calculating SNN test error :", end='\t')
     snn_test_error = BRE.SNN_error(test_loader, delta_prime, n_mtcarlo_approx)
     print("Done")
     
@@ -126,4 +125,4 @@ def main(model_name, test_cuda=False):
 
 if __name__ == '__main__':
 
-    main(model_name = 'T-600', test_cuda = torch.cuda.is_available())
+    main(model_name='T-600', test_cuda=torch.cuda.is_available())

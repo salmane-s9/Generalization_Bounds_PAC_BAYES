@@ -62,7 +62,6 @@ class PacBayesLoss(nn.Module):
                                  self.data_size, self.d_size)
         return Bre_loss
     
-
     def compute_bound(self, train_loader, delta_prime, n_mtcarlo_approx):
         """
          Returns:

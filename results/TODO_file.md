@@ -1,16 +1,11 @@
 ### Meeting the 13th of March
 
 ####Experiments
-1. Generate results for T-300, T-600, R-600 neural network. 
-For small number of epochs (around 20) and for a batch of images (~32)
-generate the following output. 
-  * change of the stochastic NN loss term (nnloss)
-  * change of the BRE term
-  * weights norm
 
-Consider two cases to initialize parameters \lambda and \sigma:
-  1. \lambda = 1 and \sigma is identity vector
-  2. values are the same as in the paper
+1. For the model T-600 (pretrained model) and parameters setting as in the paper, get the following outputs
+
+  * intermediate values during PAC-Bayes bound optimization (BRE_Loss, NN-loss, parameters norms, including weights, $\sigma$ and $\lamda$). Make a plot, where x-axis is the number of epochs and y-axis reveals the value. (Needs change in the main function)
+  * PAC-Bayes bound value.
 
 2. Create a file that contains a function to train custom neural network. It takes as an input a custom model (defined in Architectures), and return weights.
 In the case we don't pass *weight_pass* parameter, meaning there is no pretrained model. 
