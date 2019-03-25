@@ -103,6 +103,7 @@ def main(model_name, test_cuda=False):
             optimizer.zero_grad()
     
     print("\n==> Optimization done ")
+    print("\n==> Saving Parameters... ")
     with open('./PAC_solutions/'+ str(model_name) +'_BRE_flat_params.pickle', 'wb') as handle:
         pickle.dump(BRE.flat_params, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
