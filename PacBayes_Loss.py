@@ -62,7 +62,6 @@ class PacBayesLoss(nn.Module):
                                  self.data_size, self.d_size)
         return Bre_loss
     
-
     def compute_bound(self, train_loader, delta_prime, n_mtcarlo_approx):
         """
          Returns:
@@ -87,7 +86,7 @@ class PacBayesLoss(nn.Module):
         """
        Sample weights from the posterior distribution Q(flat_params, Sigma_posterior)
         """
-        return self.flat_params + torch.randn(self.d_size) * torch.exp(self.sigma_posterior_)
+        return self.flat_params + torch.randn(self.d_size).to(self.device) * torch.exp(self.sigma_posterior_)
     
     def SNN_error(self, loader, delta_prime, n_mtcarlo_approx):
         """
