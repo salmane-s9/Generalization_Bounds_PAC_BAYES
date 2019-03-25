@@ -70,7 +70,7 @@ class PacBayesLoss(nn.Module):
                               the sample convergence bound
             final_bound : Final Pac Bayes bound by application of Paper theorem on SNN_train_error 
         """
-        SNN_train_error = self.SNN_error(train_loader, delta_prime, n_mtcarlo_approx, self.device) 
+        SNN_train_error = self.SNN_error(train_loader, delta_prime, n_mtcarlo_approx) 
         
         j_round = torch.round(self.precision * (log(self.bound) - (2 * self.lambda_prior_)))
         lambda_prior_ = 0.5 * (log(self.bound)- (j_round/self.precision)).clone().detach()

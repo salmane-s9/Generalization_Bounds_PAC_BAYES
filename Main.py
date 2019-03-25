@@ -6,33 +6,53 @@ from NN_loss import mnnLoss
 from utils import *
 from Mnist_dataset import binary_mnist_loader
 from Architectures import * 
+import pickle
+import os  
 
 
-def main(test_cuda=False, weight_path=None):
+def main(model_name, test_cuda=False):
 
     print('-'*80)
+    
     device = torch.device("cuda" if test_cuda else "cpu")
     INPUT_SIZE = 784
-    HIDDEN_SIZE = [300, 600, 1200]
     NUM_CLASSES = 2
-    BATCH_SIZE = 1
+    if (model_name[1]=='-'): 
+        NB_LAYERS , HIDDEN_SIZE = 1 , int(model_name[2:])
+    else:
+        NB_LAYERS, HIDDEN_SIZE = int(model_name[1]), int(model_name[3:])
+    
+    
+    LEARNING_RATE = 0.01
+    MOMENTUM = 0.9
+    NUM_EPOCHS = 20 if model_name[0]=='T' else 100
+    BATCH_SIZE = 100
 
     # Define the model of a network which weight we will optimize
-    initial_net = FeedForwardNeuralNet(INPUT_SIZE, HIDDEN_SIZE[1], NUM_CLASSES)
+    initial_net = create_network(NB_LAYERS, INPUT_SIZE, HIDDEN_SIZE, NUM_CLASSES)
+    
+    weight_path = 'SGD_solutions/{}.ckpt'.format(model_name)
+    
 
-    if weight_path is not None:
+    if os.path.isfile(weight_path):
         net = load_train_weights(initial_net, weight_path)
     else:
-        net = initial_net
+        print('Network not already trained')
+        print('\n Starting Training for network : '+model_name)
+        train, test = binary_mnist_loader(batch_size=BATCH_SIZE, shuffle=False, random_labels=(model_name[0]=='R'))
+        run(model_name, initial_net, train, test, LEARNING_RATE, MOMENTUM, NUM_EPOCHS, device)
+        print('Traininig done for network : '+model_name)
+        net = load_train_weights(initial_net, weight_path)
 
-    train_loader, test_loader = binary_mnist_loader(batch_size=BATCH_SIZE, shuffle=False, random_labels=False)
+    
+    train_loader, test_loader = binary_mnist_loader(batch_size=1, shuffle=False, random_labels=(model_name[0]=='R'))
 
     conf_param = 0.025 
     Precision = 100 
     bound = 0.1 
     data_size = 55000
     # n_mtcarlo_approx = 150000
-    n_mtcarlo_approx = 2
+    n_mtcarlo_approx = 200
     delta_prime = 0.01
     learning_rate = 0.001
 
@@ -45,7 +65,9 @@ def main(test_cuda=False, weight_path=None):
     optimizer = torch.optim.RMSprop(filter(lambda p: p.requires_grad, BRE.parameters()), lr=learning_rate, alpha=0.9)
     criterion = nn.CrossEntropyLoss()
     nnloss = mnnLoss(criterion, BRE.flat_params, BRE.sigma_posterior_, net, BRE.d_size, device)
-    epochs = 1
+    epochs = 4
+
+    print("==> Starting PAC-Bayes bound optimization")
 
     mean_losses = []
     for epoch in np.arange(1, epochs+1):   
@@ -56,8 +78,7 @@ def main(test_cuda=False, weight_path=None):
                 param_group['lr'] = learning_rate/10
             
         for i, (images, labels) in enumerate(train_loader):
-            # if i > 1:
-            #     break
+
             print("\r Progress: {}%".format(100 * i // BRE.data_size), end="")
 
             images = images.reshape(-1, 28 * 28).to(device)
@@ -80,19 +101,25 @@ def main(test_cuda=False, weight_path=None):
 
             optimizer.step()
             optimizer.zero_grad()
+    
+    print("\n==> Optimization done ")
+    with open('./PAC_solutions/'+ str(model_name) +'_BRE_flat_params.pickle', 'wb') as handle:
+        pickle.dump(BRE.flat_params, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
-        snn_train_error, Pac_bound = BRE.compute_bound(train_loader, delta_prime, n_mtcarlo_approx, device)   
+    with open('PAC_solutions/'+ str(model_name) +'_BRE_sigma_posterior.pickle', 'wb') as handle:
+        pickle.dump(BRE.sigma_posterior_, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
-        snn_test_error = BRE.SNN_error(test_loader, delta_prime, n_mtcarlo_approx, device)
+    with open('PAC_solutions/'+ str(model_name) +'_BRE_lambda_prior.pickle', 'wb') as handle:
+        pickle.dump(BRE.lambda_prior_, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
-        print('\n Epoch {} Finished \t SNN_Train Error: {:.4f}\t SNN_Test Error: {:.4f} \t PAC-bayes Bound: {:.4f}\r'.format(epoch, snn_train_error,
+
+    snn_train_error, Pac_bound = BRE.compute_bound(train_loader, delta_prime, n_mtcarlo_approx)   
+    snn_test_error = BRE.SNN_error(test_loader, delta_prime, n_mtcarlo_approx)
+
+    print('\n Epoch {} Finished \t SNN_Train Error: {:.4f}\t SNN_Test Error: {:.4f} \t PAC-bayes Bound: {:.4f}\r'.format(epoch, snn_train_error,
                 snn_test_error, Pac_bound))
     
 
 if __name__ == '__main__':
-    # torch.manual_seed(300)
-    weight_path = 'SGD_solutions/T-600.ckpt'
-    if torch.cuda.is_available():
-        main(test_cuda=True)
-    else:
-        main(test_cuda=False)
+
+    main(model_name = 'T-600', test_cuda = torch.cuda.is_available())

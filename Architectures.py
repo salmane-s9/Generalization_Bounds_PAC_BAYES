@@ -70,3 +70,29 @@ class FeedForwardNeuralNet3R(nn.Module):
         out = self.main(x)
         return out
 
+def weights_init(m):
+    """
+    Function for weights initializing . According to the paper :
+    First layer bias (weights initialized rondomly and bias to 0.1)
+    Remaining layers (weights initialized rondomly and bias to 0)
+    
+    """
+    classname = m.__class__.__name__
+    if classname.find('Linear') != -1:
+        m.weight.data.normal_(0.0, 0.04)
+        m.bias.data.fill_(0)
+        
+def create_network(nb_layers, input_size, hidden_size, num_classes):
+    if (nb_layers == 1):
+        network = FeedForwardNeuralNet(input_size, hidden_size, num_classes)
+    elif (nb_layers == 2):
+        network = FeedForwardNeuralNet2(input_size, hidden_size, num_classes)
+    elif (nb_layers == 3):
+        network = FeedForwardNeuralNet3(input_size, hidden_size, num_classes)
+    else :
+        raise Exception('The number of layers should not exceed 3')
+
+    network.apply(weights_init)
+    network.fc1.bias.data.fill_(0.1)
+    
+    return network

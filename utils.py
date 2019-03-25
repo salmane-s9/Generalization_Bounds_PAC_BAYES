@@ -73,7 +73,63 @@ def load_train_weights(model, weights):
     model.state_dict()
     return model
 
+def train_model(num_epochs, loader, nn_model, criterion, optimizer, device):
+    MESSAGE = 'Epoch [{}/{}], Step [{}/{}], Loss: {:.4f}'
+    total_step = len(loader)
+    for epoch in range(num_epochs):
+        for i, (images, labels) in enumerate(loader):
+            # move tensors to the configured device
+            images = images.reshape(-1, 28 * 28).to(device)
+            labels = labels.to(device)
 
+            # forward pass
+            outputs = nn_model(images)
+            loss = criterion(outputs.float(), labels.long())
+
+            # backward and optimize
+            optimizer.zero_grad()
+            loss.backward()
+            optimizer.step()
+
+            if (i + 1) % 100 == 0:
+                print(MESSAGE.format(epoch + 1, num_epochs, i + 1, total_step, loss.item()))
+
+def test_model(loader, nn_model, device):
+    with torch.no_grad():
+        correct = 0
+        total = 0
+
+        for images, labels in loader:
+            images = images.reshape(-1, 28 * 28).to(device)
+            labels = labels.to(device)
+
+            outputs = nn_model(images)
+            _, predicted = torch.max(outputs.data, 1)
+
+            total += labels.size(0)
+            correct += (predicted == labels.long()).sum().item()
+
+        print('Accuracy of the network on the 10000 test images: {} %'.format(100 * correct / total))
+        
+def run(model, network ,train_loader, test_loader, LEARNING_RATE, MOMENTUM, NUM_EPOCHS, device):
+    
+    # nn model
+    nn_model = network.to(device)
+
+    # loss and optimizer
+    criterion = nn.CrossEntropyLoss()
+    optimizer = torch.optim.SGD(nn_model.parameters(), lr=LEARNING_RATE , momentum=MOMENTUM)
+
+    # Train phase
+    train_model(loader=train_loader, num_epochs=NUM_EPOCHS,
+                    nn_model=nn_model, criterion=criterion, optimizer=optimizer, device=device)
+
+    # then test
+    test_model(loader=test_loader, nn_model=nn_model, device=device)
+
+    # finally save nn model
+    torch.save(nn_model.state_dict(), 'SGD_solutions/%s.ckpt'%model)
+    
 def test_error(loader, nn_model, device):
     """
     Compute the empirical error of neural network on a dataset loader
