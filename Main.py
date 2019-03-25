@@ -106,10 +106,10 @@ def main(model_name, test_cuda=False):
     with open('./PAC_solutions/'+ str(model_name) +'_BRE_flat_params.pickle', 'wb') as handle:
         pickle.dump(BRE.flat_params, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
-    with open('PAC_solutions/'+ str(model_name) +'_BRE_sigma_posterior.pickle', 'wb') as handle:
+    with open('./PAC_solutions/'+ str(model_name) +'_BRE_sigma_posterior.pickle', 'wb') as handle:
         pickle.dump(BRE.sigma_posterior_, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
-    with open('PAC_solutions/'+ str(model_name) +'_BRE_lambda_prior.pickle', 'wb') as handle:
+    with open('./PAC_solutions/'+ str(model_name) +'_BRE_lambda_prior.pickle', 'wb') as handle:
         pickle.dump(BRE.lambda_prior_, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
 
