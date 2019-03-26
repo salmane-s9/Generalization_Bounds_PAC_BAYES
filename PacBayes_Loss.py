@@ -2,7 +2,6 @@ import torch
 import torch.nn as nn
 from torch.nn.utils import parameters_to_vector
 from utils import *
-# from utils import calc_BRE_term, calc_kullback_leibler, apply_weights, test_error, solve_kl_sup
 from math import log
 import copy
 

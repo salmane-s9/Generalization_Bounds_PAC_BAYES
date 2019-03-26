@@ -8,6 +8,7 @@ from Mnist_dataset import binary_mnist_loader
 from Architectures import * 
 import pickle
 import os  
+from functools import reduce
 
 
 def main(model_name, test_cuda=False):
@@ -68,8 +69,9 @@ def main(model_name, test_cuda=False):
 
     print("==> Starting PAC-Bayes bound optimization")
 
-    mean_losses = []
+    mean_losses, BRE_loss, NN_loss_final, norm_weights, norm_sigma, norm_lambda = (list() for i in range(6))
     for epoch in np.arange(1, epochs+1):   
+        NN_loss = list()
         print(" \n Epoch {} :  ".format(epoch), end="\n")
         if (epoch == 4):
             print("==> Changing Learning rate from {} to {}".format(learning_rate, learning_rate/10))
@@ -83,7 +85,10 @@ def main(model_name, test_cuda=False):
             images = images.reshape(-1, 28 * 28).to(device)
             labels = labels.to(device)
 
-            loss = BRE() + nnloss(images, labels)
+            loss1 = BRE()
+            loss2 = nnloss(images, labels)
+            NN_loss.append(loss2)
+            loss = loss1 + loss2
 
             if (((100 * i // BRE.data_size) - (100 * (i-1) // BRE.data_size)) != 0 and i != 0): 
                 print('\t Mean loss : {} \r'.format(sum(mean_losses)/len(mean_losses)))
@@ -100,6 +105,12 @@ def main(model_name, test_cuda=False):
 
             optimizer.step()
             optimizer.zero_grad()
+
+        BRE_loss.append(loss1)
+        NN_loss_final.append(reduce(lambda a, b : a + b, NN_loss) / len(NN_loss))
+        norm_weights.append(torch.norm(BRE.flat_params.clone().detach(), p=2))
+        norm_sigma.append(torch.norm(BRE.sigma_posterior_.clone().detach(), p=2))
+        norm_lambda.append(torch.abs(BRE.lambda_prior_.clone().detach()))
     
     print("\n==> Optimization done ")
     print("\n==> Saving Parameters... ")
@@ -111,6 +122,8 @@ def main(model_name, test_cuda=False):
 
     with open('./PAC_solutions/' + str(model_name) + '_BRE_lambda_prior.pickle', 'wb') as handle:
         pickle.dump(BRE.lambda_prior_, handle, protocol=pickle.HIGHEST_PROTOCOL)
+
+    plot_results(model_name, BRE_loss, NN_loss_final, norm_weights, norm_sigma, norm_lambda)
 
     print("\n==> Calculating SNN train error and PAC Bayes bound :", end='\t')
     snn_train_error, Pac_bound = BRE.compute_bound(train_loader, delta_prime, n_mtcarlo_approx) 

@@ -3,6 +3,7 @@ import torch.nn as nn
 from math import log, pi
 import numpy as np
 from scipy import optimize
+import matplotlib.pyplot as plt
 
 
 def calc_kullback_leibler(lambda_prior, sigma_post, params, params_0, d_size):
@@ -195,4 +196,29 @@ def solve_kl_sup(q, right_hand_side):
         return 1.0-1e-9
     else:
         return optimize.brentq(f, q, 1.0-1e-9)
-     
+
+def plot_results(model_name, BRE_loss, NN_loss, norm_weights, norm_sigma, norm_lambda):
+    
+    plt.style.use('ggplot')
+    range_values = range(1, len(BRE_loss) + 1) 
+    fig, axes = plt.subplots(5, 1, figsize= (18,13))
+    axes[0].plot(range_values, BRE_loss, label = "BRE Loss" , color = 'green')
+    axes[0].set_title(str(model_name))
+    axes[0].set_ylabel('BRE Loss')
+    axes[0].set_xlabel('# Of Epochs')
+    axes[1].plot(range_values, NN_loss, label = "NN Loss", color = 'blue')
+    axes[1].set_ylabel('NN Loss')
+    axes[1].set_xlabel('# Of Epochs')           
+    axes[2].plot(range_values, norm_weights, label = "Norm of the weights", color = 'red')
+    axes[2].set_ylabel('Weights_norm')
+    axes[2].set_xlabel('# Of Epochs')
+    axes[3].plot(range_values, norm_sigma, label = "Norm of sigma", color = 'yellow')
+    axes[3].set_ylabel('Sigma_norm')
+    axes[3].set_xlabel('# Of Epochs')
+    axes[4].plot(range_values, norm_lambda, label = "Norm of lambda", color = 'black')
+    axes[4].set_ylabel('Lambda_norm')
+    axes[4].set_xlabel('# Of Epochs')
+    fig.legend()
+    plt.tight_layout()
+    plt.savefig('./final_results/' + str(model_name) + '_With paper parameters--update')
+    plt.plot()
