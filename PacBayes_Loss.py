@@ -75,9 +75,9 @@ class PacBayesLoss(nn.Module):
 
         Bre_loss = calc_BRE_term(self.precision, self.conf_param, self.bound, self.flat_params, 
                                  self.params_0, lambda_prior_, self.sigma_posterior_, 
-                                 self.data_size, self.d_size)
+                                 self.data_size, self.d_size).detach().numpy()
         
-        final_bound = solve_kl_sup(SNN_train_error, Bre_loss)
+        final_bound = solve_kl_sup(SNN_train_error, 2 * (Bre_loss**2))
         
         return SNN_train_error, final_bound
     
