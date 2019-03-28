@@ -52,7 +52,7 @@ def main(model_name, test_cuda=False):
     bound = 0.1 
     data_size = 55000
     # n_mtcarlo_approx = 150000
-    n_mtcarlo_approx = 150
+    n_mtcarlo_approx = 10
     delta_prime = 0.01
     learning_rate = 0.001
 
@@ -69,7 +69,7 @@ def main(model_name, test_cuda=False):
 
     print("==> Starting PAC-Bayes bound optimization")
 
-    mean_losses, BRE_loss, NN_loss_final, norm_weights, norm_sigma, norm_lambda = (list() for i in range(6))
+    mean_losses, BRE_loss, KL_value, NN_loss_final, norm_weights, norm_sigma, norm_lambda = (list() for i in range(7))
     for epoch in np.arange(1, epochs+1):   
         NN_loss = list()
         print(" \n Epoch {} :  ".format(epoch), end="\n")
@@ -79,7 +79,6 @@ def main(model_name, test_cuda=False):
                 param_group['lr'] = learning_rate/10
             
         for i, (images, labels) in enumerate(train_loader):
-
             print("\r Progress: {}%".format(100 * i // BRE.data_size), end="")
 
             images = images.reshape(-1, 28 * 28).to(device)
@@ -108,7 +107,8 @@ def main(model_name, test_cuda=False):
             optimizer.step()
             optimizer.zero_grad()
 
-        BRE_loss.append(loss1)
+        BRE_loss.append(loss1.item())
+        KL_value.append(BRE.kl_value)
         NN_loss_final.append(reduce(lambda a, b : a + b, NN_loss) / len(NN_loss))
         norm_weights.append(torch.norm(BRE.flat_params.clone().detach(), p=2))
         norm_sigma.append(torch.norm(BRE.sigma_posterior_.clone().detach(), p=2))
@@ -125,7 +125,7 @@ def main(model_name, test_cuda=False):
     with open('./PAC_solutions/' + str(model_name) + '_BRE_lambda_prior.pickle', 'wb') as handle:
         pickle.dump(BRE.lambda_prior_, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
-    plot_results(model_name, BRE_loss, NN_loss_final, norm_weights, norm_sigma, norm_lambda)
+    plot_results(model_name, BRE_loss, Kl_value, NN_loss_final, norm_weights, norm_sigma, norm_lambda)
 
     print("\n==> Calculating SNN train error and PAC Bayes bound :", end='\t')
     snn_train_error, Pac_bound = BRE.compute_bound(train_loader, delta_prime, n_mtcarlo_approx) 

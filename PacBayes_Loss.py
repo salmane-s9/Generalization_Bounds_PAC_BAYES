@@ -52,13 +52,15 @@ class PacBayesLoss(nn.Module):
         self.data_size = data_size
         self.params_0 = torch.randn(self.flat_params.size()).to(self.device)
         self.d_size = flat_params.size()[0]
+        self.kl_value = None
         for p in self.model.parameters():
                 p.requires_grad = False
         
     def forward(self):
-        Bre_loss = calc_BRE_term(self.precision, self.conf_param, self.bound, self.flat_params, 
+        Bre_loss, kl_value = calc_BRE_term(self.precision, self.conf_param, self.bound, self.flat_params, 
                                  self.params_0, self.lambda_prior_, self.sigma_posterior_, 
                                  self.data_size, self.d_size)
+        self.kl_value = kl_value
         return Bre_loss
     
     def compute_bound(self, train_loader, delta_prime, n_mtcarlo_approx):
