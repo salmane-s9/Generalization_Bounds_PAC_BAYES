@@ -86,9 +86,11 @@ def main(model_name, test_cuda=False):
             labels = labels.to(device)
 
             loss1 = BRE()
+            loss1.backward(retain_graph=True)
+
             loss2 = nnloss(images, labels)
-            NN_loss.append(loss2)
             loss = loss1 + loss2
+            NN_loss.append(loss2)
 
             if (((100 * i // BRE.data_size) - (100 * (i-1) // BRE.data_size)) != 0 and i != 0): 
                 print('\t Mean loss : {} \r'.format(sum(mean_losses)/len(mean_losses)))
@@ -97,7 +99,7 @@ def main(model_name, test_cuda=False):
                 mean_losses.append(loss.item())
                 
             net.zero_grad()
-            loss.backward(retain_graph=True)
+            loss2.backward()
 
             weights_grad = torch.cat(list(Z.grad.view(-1) for Z in list(nnloss.model.parameters())), dim=0)
             BRE.flat_params.grad += weights_grad
