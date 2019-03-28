@@ -76,7 +76,7 @@ def main(model_name, test_cuda=False):
         epochs = 4
     print("==> Starting PAC-Bayes bound optimization")
 
-    mean_losses, BRE_loss, KL_value, NN_loss_final, norm_weights, norm_sigma, norm_lambda = (list() for i in range(7))
+    mean_losses, BRE_loss, KL_value, NN_loss_final, norm_weights, norm_sigma, norm_lambda, outputs = (list() for i in range(8))
     for epoch in np.arange(1, epochs+1):   
         NN_loss = list()
         print(" \n Epoch {} :  ".format(epoch), end="\n")
@@ -136,20 +136,31 @@ def main(model_name, test_cuda=False):
 
     plot_results(model_name, BRE_loss, KL_value, NN_loss_final, norm_weights, norm_sigma, norm_lambda)
 
-    # print("\n==> Calculating SNN train error and PAC Bayes bound :", end='\t')
-    # snn_train_error, Pac_bound = BRE.compute_bound(train_loader, delta_prime, n_mtcarlo_approx) 
-    # print("Done")
-    # print("\n==> Calculating SNN test error :", end='\t')
-    # snn_test_error = BRE.SNN_error(test_loader, delta_prime, n_mtcarlo_approx)
-    # print("Done")
+    print("\n==> Calculating SNN train error and PAC Bayes bound :", end='\t')
+    snn_train_error, Pac_bound = BRE.compute_bound(train_loader, delta_prime, n_mtcarlo_approx) 
+    outputs.append(model_name)
+    outputs.append(snn_train_error)
+    outputs.append(Pac_bound)
+    print("Done")
+    print("\n==> Calculating SNN test error :", end='\t')
+    snn_test_error = BRE.SNN_error(test_loader, delta_prime, n_mtcarlo_approx)
+    outputs.append(snn_test_error)
+    print("Done")
+    
     
     # with open('./PAC_solutions/' + str(model_name) + '_FinalPac_bound.pickle', 'wb') as handle:
     #     pickle.dump(Pac_bound, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
-    # print('\n Epoch {} Finished \t SNN_Train Error: {:.4f}\t SNN_Test Error: {:.4f} \t PAC-bayes Bound: {:.4f}\r'.format(epoch, snn_train_error,
-    #             snn_test_error, Pac_bound))
-    
+    print('\n Epoch {} Finished \t SNN_Train Error: {:.4f}\t SNN_Test Error: {:.4f} \t PAC-bayes Bound: {:.4f}\r'.format(epoch, snn_train_error,
+                snn_test_error, Pac_bound))
 
+    with open('./final_results/' + str(model_name) + '.csv', 'w') as handle:
+        spam_writer = csv.writer(csv_file, delimiter=';', quotechar='|', quoting=csv.QUOTE_MINIMAL)
+        spam_writer.writerow(['Model', 'SNN_Train_Error', 'PAC-bayes bound', 'SNN_TEST_Error'])
+
+        for output in outputs:
+            spam_writer.writerow(output)
+    
 if __name__ == '__main__':
 
     main(model_name='T-600', test_cuda=torch.cuda.is_available())
