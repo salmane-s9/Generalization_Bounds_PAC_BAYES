@@ -1,2 +1,2 @@
-Model;SNN_Train_Error;PAC-bayes bound;SNN_TEST_Error;KL_Divergence
-T-600;0.9950829670041536;0.999999999;0.995836338965919;tensor(1.3245e+09, grad_fn=<DivBackward0>)
+Model;SNN_Train_Error;PAC-bayes bound;SNN_TEST_Error;KL_Divergence
+T-600;0.3037371246000581;0.999999999;0.3495942832056006;78653696.0

@@ -222,5 +222,5 @@ def plot_results(model_name, BRE_loss, Kl_value, NN_loss, norm_weights, norm_sig
         axe.set_ylim(bottom = 0)
     fig.legend()
     plt.tight_layout()
-    plt.savefig('./final_results/' + str(model_name) + '_With paper parameters--update_test')
+    plt.savefig('./final_results/' + str(model_name) + '_paper_parameters--full')
     plt.plot()

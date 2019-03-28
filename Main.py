@@ -84,7 +84,6 @@ def main(model_name, test_cuda=False):
                 param_group['lr'] = learning_rate/10
             
         for i, (images, labels) in enumerate(train_loader):
-
             print("\r Progress: {}%".format(100 * i // BRE.data_size), end="")
 
             images = images.reshape(-1, 28 * 28).to(device)
@@ -155,5 +154,5 @@ def main(model_name, test_cuda=False):
         spam_writer.writerow(outputs)
     
 if __name__ == '__main__':
-    print(torch.cuda.is_available())
+    print("CUDA is available: {}".format{torch.cuda.is_available()})
     main(model_name='T-600', test_cuda=torch.cuda.is_available())
