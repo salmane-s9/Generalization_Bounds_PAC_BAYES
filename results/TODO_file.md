@@ -5,7 +5,9 @@
   * intermediate values during PAC-Bayes bound optimization (BRE_Loss, NN-loss, parameters norms, including weights, $\sigma$ and $\lamda$). Make a plot, where x-axis is the number of epochs and y-axis reveals the value. (Needs change in the main function)
   * PAC-Bayes bound value.
 
-2. Create a file that contains a function to train custom neural network. It takes as an input a custom model (defined in Architectures), and return weights.
+Note, that the norm of sigma parameter is growing during the training because it depends on weight values (initialization of sigma is absolute weight values).
+
+2. Create a file that contains a function to train custom neural network. It takes as an input a custom model (defined in Architectures), and return weights. (DONE)
 In the case we don't pass *weight_pass* parameter, meaning there is no pretrained model. 
 Then, it will be trained first and obtained weights will be passed to PAC-Bayes bound optimizer.
 
@@ -14,7 +16,6 @@ Then, it will be trained first and obtained weights will be passed to PAC-Bayes 
 #### Ideas
 * After running small experiments, we can run its full version (setting all parameters as in the paper) on a server.
 We expect to get results as in the paper, probably not exactly the same but similar.
-
 
 #### To run on the Grid5000 cluster 
 
