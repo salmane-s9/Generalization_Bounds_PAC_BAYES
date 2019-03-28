@@ -215,6 +215,7 @@ def plot_results(model_name, BRE_loss, NN_loss, norm_weights, norm_sigma, norm_l
     axes[4].set_ylabel('Lambda_norm')
     axes[4].set_xlabel('# Of Epochs')
     for axe in axes:
+        axe.set_xticks(range_values)
         axe.set_ylim(bottom = 0)
     fig.legend()
     plt.tight_layout()

@@ -54,7 +54,11 @@ def main(model_name, test_cuda=False):
     # n_mtcarlo_approx = 150000
     n_mtcarlo_approx = 150
     delta_prime = 0.01
-    learning_rate = 0.001
+    if (model_name[0]=='R'):
+        learning_rate = 0.0001
+    else:
+        learning_rate = 0.001
+    
 
     lambda_prior = torch.tensor(-3., device=device).requires_grad_()
     sigma_posterior = torch.abs(parameters_to_vector(net.parameters())).to(device).requires_grad_()
@@ -65,21 +69,23 @@ def main(model_name, test_cuda=False):
     optimizer = torch.optim.RMSprop(filter(lambda p: p.requires_grad, BRE.parameters()), lr=learning_rate, alpha=0.9)
     criterion = nn.CrossEntropyLoss()
     nnloss = mnnLoss(criterion, BRE.flat_params, BRE.sigma_posterior_, net, BRE.d_size, device)
-    epochs = 4
 
+    if (model_name[0]=='R'):
+        epochs = 8
+    else:
+        epochs = 4
     print("==> Starting PAC-Bayes bound optimization")
 
     mean_losses, BRE_loss, NN_loss_final, norm_weights, norm_sigma, norm_lambda = (list() for i in range(6))
     for epoch in np.arange(1, epochs+1):   
         NN_loss = list()
         print(" \n Epoch {} :  ".format(epoch), end="\n")
-        if (epoch == 4):
+        if ((epoch == 4) & (model_name[0]=='T')):
             print("==> Changing Learning rate from {} to {}".format(learning_rate, learning_rate/10))
             for param_group in optimizer.param_groups:
                 param_group['lr'] = learning_rate/10
             
         for i, (images, labels) in enumerate(train_loader):
-
             print("\r Progress: {}%".format(100 * i // BRE.data_size), end="")
 
             images = images.reshape(-1, 28 * 28).to(device)
@@ -134,6 +140,9 @@ def main(model_name, test_cuda=False):
     snn_test_error = BRE.SNN_error(test_loader, delta_prime, n_mtcarlo_approx)
     print("Done")
     
+    with open('./PAC_solutions/' + str(model_name) + '_FinalPac_bound.pickle', 'wb') as handle:
+        pickle.dump(Pac_bound, handle, protocol=pickle.HIGHEST_PROTOCOL)
+
     print('\n Epoch {} Finished \t SNN_Train Error: {:.4f}\t SNN_Test Error: {:.4f} \t PAC-bayes Bound: {:.4f}\r'.format(epoch, snn_train_error,
                 snn_test_error, Pac_bound))
     
