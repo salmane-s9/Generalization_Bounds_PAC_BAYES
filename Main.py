@@ -8,6 +8,7 @@ from Mnist_dataset import binary_mnist_loader
 from Architectures import * 
 import pickle
 import os  
+import csv
 from functools import reduce
 
 
@@ -51,13 +52,14 @@ def main(model_name, test_cuda=False):
     Precision = 100 
     bound = 0.1 
     data_size = 55000
-    # n_mtcarlo_approx = 150000
-    n_mtcarlo_approx = 10
+    n_mtcarlo_approx = 150000
     delta_prime = 0.01
     if (model_name[0]=='R'):
         learning_rate = 0.0001
+        epochs = 8
     else:
         learning_rate = 0.001
+        epochs = 4
     
 
     lambda_prior = torch.tensor(-3., device=device).requires_grad_()
@@ -70,10 +72,6 @@ def main(model_name, test_cuda=False):
     criterion = nn.CrossEntropyLoss()
     nnloss = mnnLoss(criterion, BRE.flat_params, BRE.sigma_posterior_, net, BRE.d_size, device)
 
-    if (model_name[0]=='R'):
-        epochs = 8
-    else:
-        epochs = 4
     print("==> Starting PAC-Bayes bound optimization")
 
     mean_losses, BRE_loss, KL_value, NN_loss_final, norm_weights, norm_sigma, norm_lambda, outputs = (list() for i in range(8))
@@ -86,8 +84,7 @@ def main(model_name, test_cuda=False):
                 param_group['lr'] = learning_rate/10
             
         for i, (images, labels) in enumerate(train_loader):
-            if i>10:
-                break
+
             print("\r Progress: {}%".format(100 * i // BRE.data_size), end="")
 
             images = images.reshape(-1, 28 * 28).to(device)
@@ -125,19 +122,20 @@ def main(model_name, test_cuda=False):
     
     print("\n==> Optimization done ")
     print("\n==> Saving Parameters... ")
-    # with open('./PAC_solutions/' + str(model_name) + '_BRE_flat_params.pickle', 'wb') as handle:
-    #     pickle.dump(BRE.flat_params, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
-    # with open('./PAC_solutions/' + str(model_name) + '_BRE_sigma_posterior.pickle', 'wb') as handle:
-    #     pickle.dump(BRE.sigma_posterior_, handle, protocol=pickle.HIGHEST_PROTOCOL)
+    with open('./PAC_solutions/' + str(model_name) + '_BRE_flat_params.pickle', 'wb') as handle:
+        pickle.dump(BRE.flat_params, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
-    # with open('./PAC_solutions/' + str(model_name) + '_BRE_lambda_prior.pickle', 'wb') as handle:
-    #     pickle.dump(BRE.lambda_prior_, handle, protocol=pickle.HIGHEST_PROTOCOL)
+    with open('./PAC_solutions/' + str(model_name) + '_BRE_sigma_posterior.pickle', 'wb') as handle:
+        pickle.dump(BRE.sigma_posterior_, handle, protocol=pickle.HIGHEST_PROTOCOL)
+
+    with open('./PAC_solutions/' + str(model_name) + '_BRE_lambda_prior.pickle', 'wb') as handle:
+        pickle.dump(BRE.lambda_prior_, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
     plot_results(model_name, BRE_loss, KL_value, NN_loss_final, norm_weights, norm_sigma, norm_lambda)
 
     print("\n==> Calculating SNN train error and PAC Bayes bound :", end='\t')
-    snn_train_error, Pac_bound = BRE.compute_bound(train_loader, delta_prime, n_mtcarlo_approx) 
+    snn_train_error, Pac_bound, kl = BRE.compute_bound(train_loader, delta_prime, n_mtcarlo_approx) 
     outputs.append(model_name)
     outputs.append(snn_train_error)
     outputs.append(Pac_bound)
@@ -145,21 +143,16 @@ def main(model_name, test_cuda=False):
     print("\n==> Calculating SNN test error :", end='\t')
     snn_test_error = BRE.SNN_error(test_loader, delta_prime, n_mtcarlo_approx)
     outputs.append(snn_test_error)
+    outputs.append(kl.item())
     print("Done")
-    
-    
-    # with open('./PAC_solutions/' + str(model_name) + '_FinalPac_bound.pickle', 'wb') as handle:
-    #     pickle.dump(Pac_bound, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
     print('\n Epoch {} Finished \t SNN_Train Error: {:.4f}\t SNN_Test Error: {:.4f} \t PAC-bayes Bound: {:.4f}\r'.format(epoch, snn_train_error,
                 snn_test_error, Pac_bound))
 
-    with open('./final_results/' + str(model_name) + '.csv', 'w') as handle:
-        spam_writer = csv.writer(csv_file, delimiter=';', quotechar='|', quoting=csv.QUOTE_MINIMAL)
-        spam_writer.writerow(['Model', 'SNN_Train_Error', 'PAC-bayes bound', 'SNN_TEST_Error'])
-
-        for output in outputs:
-            spam_writer.writerow(output)
+    with open('./final_results/' + str(model_name) + '_.csv', 'w') as handle:
+        spam_writer = csv.writer(handle, delimiter=';', quotechar='|', quoting=csv.QUOTE_MINIMAL)
+        spam_writer.writerow(['Model', 'SNN_Train_Error', 'PAC-bayes bound', 'SNN_TEST_Error', 'KL_Divergence'])
+        spam_writer.writerow(outputs)
     
 if __name__ == '__main__':
 

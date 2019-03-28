@@ -75,13 +75,14 @@ class PacBayesLoss(nn.Module):
         j_round = torch.round(self.precision * (log(self.bound) - (2 * self.lambda_prior_)))
         lambda_prior_ = 0.5 * (log(self.bound)- (j_round/self.precision)).clone().detach()
 
-        Bre_loss = calc_BRE_term(self.precision, self.conf_param, self.bound, self.flat_params, 
+        Bre_loss, kl = calc_BRE_term(self.precision, self.conf_param, self.bound, self.flat_params, 
                                  self.params_0, lambda_prior_, self.sigma_posterior_, 
-                                 self.data_size, self.d_size).detach().numpy()
+                                 self.data_size, self.d_size)
         
+        Bre_loss = Bre_loss.detach().numpy()
         final_bound = solve_kl_sup(SNN_train_error, 2 * (Bre_loss**2))
         
-        return SNN_train_error, final_bound
+        return SNN_train_error, final_bound, kl
     
     def sample_weights(self):      
         """
