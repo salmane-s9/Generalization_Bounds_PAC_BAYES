@@ -2,7 +2,6 @@ import torch
 import torch.nn as nn
 from torch.nn.utils import parameters_to_vector
 from utils import *
-# from utils import calc_BRE_term, calc_kullback_leibler, apply_weights, test_error, solve_kl_sup
 from math import log
 import copy
 
@@ -53,13 +52,15 @@ class PacBayesLoss(nn.Module):
         self.data_size = data_size
         self.params_0 = torch.randn(self.flat_params.size()).to(self.device)
         self.d_size = flat_params.size()[0]
+        self.kl_value = None
         for p in self.model.parameters():
                 p.requires_grad = False
         
     def forward(self):
-        Bre_loss = calc_BRE_term(self.precision, self.conf_param, self.bound, self.flat_params, 
+        Bre_loss, kl_value = calc_BRE_term(self.precision, self.conf_param, self.bound, self.flat_params, 
                                  self.params_0, self.lambda_prior_, self.sigma_posterior_, 
                                  self.data_size, self.d_size)
+        self.kl_value = kl_value
         return Bre_loss
     
     def compute_bound(self, train_loader, delta_prime, n_mtcarlo_approx):
@@ -74,13 +75,14 @@ class PacBayesLoss(nn.Module):
         j_round = torch.round(self.precision * (log(self.bound) - (2 * self.lambda_prior_)))
         lambda_prior_ = 0.5 * (log(self.bound)- (j_round/self.precision)).clone().detach()
 
-        Bre_loss = calc_BRE_term(self.precision, self.conf_param, self.bound, self.flat_params, 
+        Bre_loss, kl = calc_BRE_term(self.precision, self.conf_param, self.bound, self.flat_params, 
                                  self.params_0, lambda_prior_, self.sigma_posterior_, 
                                  self.data_size, self.d_size)
         
-        final_bound = solve_kl_sup(SNN_train_error, Bre_loss)
+        Bre_loss = Bre_loss.detach().numpy()
+        final_bound = solve_kl_sup(SNN_train_error, 2 * (Bre_loss**2))
         
-        return SNN_train_error, final_bound
+        return SNN_train_error, final_bound, kl
     
     def sample_weights(self):      
         """
