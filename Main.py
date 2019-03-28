@@ -86,6 +86,8 @@ def main(model_name, test_cuda=False):
                 param_group['lr'] = learning_rate/10
             
         for i, (images, labels) in enumerate(train_loader):
+            if i>10:
+                break
             print("\r Progress: {}%".format(100 * i // BRE.data_size), end="")
 
             images = images.reshape(-1, 28 * 28).to(device)
@@ -123,29 +125,29 @@ def main(model_name, test_cuda=False):
     
     print("\n==> Optimization done ")
     print("\n==> Saving Parameters... ")
-    with open('./PAC_solutions/' + str(model_name) + '_BRE_flat_params.pickle', 'wb') as handle:
-        pickle.dump(BRE.flat_params, handle, protocol=pickle.HIGHEST_PROTOCOL)
+    # with open('./PAC_solutions/' + str(model_name) + '_BRE_flat_params.pickle', 'wb') as handle:
+    #     pickle.dump(BRE.flat_params, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
-    with open('./PAC_solutions/' + str(model_name) + '_BRE_sigma_posterior.pickle', 'wb') as handle:
-        pickle.dump(BRE.sigma_posterior_, handle, protocol=pickle.HIGHEST_PROTOCOL)
+    # with open('./PAC_solutions/' + str(model_name) + '_BRE_sigma_posterior.pickle', 'wb') as handle:
+    #     pickle.dump(BRE.sigma_posterior_, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
-    with open('./PAC_solutions/' + str(model_name) + '_BRE_lambda_prior.pickle', 'wb') as handle:
-        pickle.dump(BRE.lambda_prior_, handle, protocol=pickle.HIGHEST_PROTOCOL)
+    # with open('./PAC_solutions/' + str(model_name) + '_BRE_lambda_prior.pickle', 'wb') as handle:
+    #     pickle.dump(BRE.lambda_prior_, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
-    plot_results(model_name, BRE_loss, Kl_value, NN_loss_final, norm_weights, norm_sigma, norm_lambda)
+    plot_results(model_name, BRE_loss, KL_value, NN_loss_final, norm_weights, norm_sigma, norm_lambda)
 
-    print("\n==> Calculating SNN train error and PAC Bayes bound :", end='\t')
-    snn_train_error, Pac_bound = BRE.compute_bound(train_loader, delta_prime, n_mtcarlo_approx) 
-    print("Done")
-    print("\n==> Calculating SNN test error :", end='\t')
-    snn_test_error = BRE.SNN_error(test_loader, delta_prime, n_mtcarlo_approx)
-    print("Done")
+    # print("\n==> Calculating SNN train error and PAC Bayes bound :", end='\t')
+    # snn_train_error, Pac_bound = BRE.compute_bound(train_loader, delta_prime, n_mtcarlo_approx) 
+    # print("Done")
+    # print("\n==> Calculating SNN test error :", end='\t')
+    # snn_test_error = BRE.SNN_error(test_loader, delta_prime, n_mtcarlo_approx)
+    # print("Done")
     
-    with open('./PAC_solutions/' + str(model_name) + '_FinalPac_bound.pickle', 'wb') as handle:
-        pickle.dump(Pac_bound, handle, protocol=pickle.HIGHEST_PROTOCOL)
+    # with open('./PAC_solutions/' + str(model_name) + '_FinalPac_bound.pickle', 'wb') as handle:
+    #     pickle.dump(Pac_bound, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
-    print('\n Epoch {} Finished \t SNN_Train Error: {:.4f}\t SNN_Test Error: {:.4f} \t PAC-bayes Bound: {:.4f}\r'.format(epoch, snn_train_error,
-                snn_test_error, Pac_bound))
+    # print('\n Epoch {} Finished \t SNN_Train Error: {:.4f}\t SNN_Test Error: {:.4f} \t PAC-bayes Bound: {:.4f}\r'.format(epoch, snn_train_error,
+    #             snn_test_error, Pac_bound))
     
 
 if __name__ == '__main__':
