@@ -201,26 +201,42 @@ def plot_results(model_name, BRE_loss, Kl_value, NN_loss, norm_weights, norm_sig
     
     plt.style.use('ggplot')
     range_values = range(1, len(BRE_loss) + 1) 
-    fig, axes = plt.subplots(6, 1, figsize=(18,13))
-    axes[0].plot(range_values, BRE_loss, label="BRE Loss", color='green')
-    axes[0].set_title(str(model_name))
-    axes[0].set_ylabel('BRE Loss')
-    axes[1].plot(range_values, NN_loss, label="NN Loss", color='blue')
-    axes[1].set_ylabel('KL-div')        
-    axes[2].plot(range_values, Kl_value, label="KL-divergence", color='grey')
-    axes[2].set_ylabel('NN Loss')        
-    axes[3].plot(range_values, norm_weights, label="Norm of the weights", color='red')
-    axes[3].set_ylabel('Weights_norm')
-    axes[4].plot(range_values, norm_sigma, label="Norm of sigma", color='yellow')
-    axes[4].set_ylabel('Sigma_norm')
-    axes[5].plot(range_values, norm_lambda, label="Norm of lambda", color='black')
-    axes[5].set_ylabel('Lambda_norm')
-    axes[5].set_xlabel('# Of Epochs')
+    fig, axes = plt.subplots(6, 1, figsize=(18, 13))
+    param_names = ['BRE Loss', 'NN Loss', 'KL-div', 'Weights_norm', 'Sigma_norm', 'Lambda_norm']
+    param_data = [BRE_loss, NN_loss, Kl_value, norm_weights, norm_sigma, norm_lambda]
+    plot_colors = ['green', 'blue', 'grey', 'red', 'yellow', 'black']
+
+    for i in range(6):
+        axes[i].plot(range_values, param_data[i], label=param_names[i], color=plot_colors[i])
+        axes[i].set_ylabel(param_names[i])
+        axes[i].set_xticks(range_values)
+        axes[i].set_ylim(min(param_data[i]), max(param_data[i]))
+
+        if i == 0:
+            axes[i].set_title(str(model_name))
+        elif i == 5:
+            axes[i].set_xlabel('# Of Epochs')     
+
+    # axes[0].plot(range_values, BRE_loss, label="BRE Loss", color='green')
+    # axes[0].set_title(str(model_name))
+    # axes[0].set_ylabel('BRE Loss')
+    # axes[1].plot(range_values, NN_loss, label="NN Loss", color='blue')
+    # axes[1].set_ylabel('NN Loss')        
+    # axes[2].plot(range_values, Kl_value, label="KL-divergence", color='grey')
+    # axes[2].set_ylabel('KL-div')        
+    # axes[3].plot(range_values, norm_weights, label="Norm of the weights", color='red')
+    # axes[3].set_ylabel('Weights_norm')
+    # axes[4].plot(range_values, norm_sigma, label="Norm of sigma", color='yellow')
+    # axes[4].set_ylabel('Sigma_norm')
+    # axes[5].plot(range_values, norm_lambda, label="Norm of lambda", color='black')
+    # axes[5].set_ylabel('Lambda_norm')
+    # axes[5].set_xlabel('# Of Epochs')
     
-    for axe in axes:
-        axe.set_xticks(range_values)
-        axe.set_ylim(bottom = 0)
+    # for axe in axes:
+    #     axe.set_xticks(range_values)
+    #     axe.set_ylim(bottom=0)
+    
     fig.legend()
     plt.tight_layout()
-    plt.savefig('./final_results/' + str(model_name) + '_paper_parameters--full')
+    plt.savefig('./final_results/' + str(model_name) + '_paper_parameters--testtest')
     plt.plot()
