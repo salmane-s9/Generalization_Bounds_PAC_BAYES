@@ -210,7 +210,14 @@ def plot_results(model_name, BRE_loss, Kl_value, NN_loss, norm_weights, norm_sig
         axes[i].plot(range_values, param_data[i], label=param_names[i], color=plot_colors[i])
         axes[i].set_ylabel(param_names[i])
         axes[i].set_xticks(range_values)
-        axes[i].set_ylim(min(param_data[i]), max(param_data[i]))
+        if i > 0:
+            min_y = min(param_data[i]).item()
+            max_y = max(param_data[i]).item()
+        else:
+            min_y = min(param_data[i])
+            max_y = max(param_data[i])
+        
+        axes[i].set_ylim(min_y, max_y)
 
         if i == 0:
             axes[i].set_title(str(model_name))
@@ -223,7 +230,6 @@ def plot_results(model_name, BRE_loss, Kl_value, NN_loss, norm_weights, norm_sig
     # axes[1].plot(range_values, NN_loss, label="NN Loss", color='blue')
     # axes[1].set_ylabel('NN Loss')        
     # axes[2].plot(range_values, Kl_value, label="KL-divergence", color='grey')
-    # axes[2].set_ylabel('KL-div')        
     # axes[3].plot(range_values, norm_weights, label="Norm of the weights", color='red')
     # axes[3].set_ylabel('Weights_norm')
     # axes[4].plot(range_values, norm_sigma, label="Norm of sigma", color='yellow')

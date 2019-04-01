@@ -79,7 +79,11 @@ class PacBayesLoss(nn.Module):
                                  self.params_0, lambda_prior_, self.sigma_posterior_, 
                                  self.data_size, self.d_size)
         
-        Bre_loss = Bre_loss.detach().numpy()
+        if torch.cuda.is_available():
+            cuda_tensor = Bre_loss.cuda()
+            Bre_loss = cuda_tensor.cpu().detach().numpy()
+        else:
+            Bre_loss = Bre_loss.detach().numpy()
         final_bound = solve_kl_sup(SNN_train_error, 2 * (Bre_loss**2))
         
         return SNN_train_error, final_bound, kl
