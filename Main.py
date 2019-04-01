@@ -154,5 +154,5 @@ def main(model_name, test_cuda=False):
         spam_writer.writerow(outputs)
     
 if __name__ == '__main__':
-    print("CUDA is available: {}".format{torch.cuda.is_available()})
+    print("CUDA is available: {}".format(torch.cuda.is_available()))
     main(model_name='T-600', test_cuda=torch.cuda.is_available())
