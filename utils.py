@@ -222,27 +222,9 @@ def plot_results(model_name, BRE_loss, Kl_value, NN_loss, norm_weights, norm_sig
         if i == 0:
             axes[i].set_title(str(model_name))
         elif i == 5:
-            axes[i].set_xlabel('# Of Epochs')     
-
-    # axes[0].plot(range_values, BRE_loss, label="BRE Loss", color='green')
-    # axes[0].set_title(str(model_name))
-    # axes[0].set_ylabel('BRE Loss')
-    # axes[1].plot(range_values, NN_loss, label="NN Loss", color='blue')
-    # axes[1].set_ylabel('NN Loss')        
-    # axes[2].plot(range_values, Kl_value, label="KL-divergence", color='grey')
-    # axes[3].plot(range_values, norm_weights, label="Norm of the weights", color='red')
-    # axes[3].set_ylabel('Weights_norm')
-    # axes[4].plot(range_values, norm_sigma, label="Norm of sigma", color='yellow')
-    # axes[4].set_ylabel('Sigma_norm')
-    # axes[5].plot(range_values, norm_lambda, label="Norm of lambda", color='black')
-    # axes[5].set_ylabel('Lambda_norm')
-    # axes[5].set_xlabel('# Of Epochs')
-    
-    # for axe in axes:
-    #     axe.set_xticks(range_values)
-    #     axe.set_ylim(bottom=0)
+            axes[i].set_xlabel('# Of Epochs')
     
     fig.legend()
     plt.tight_layout()
-    plt.savefig('./final_results/' + str(model_name) + '_paper_parameters--testtest')
+    plt.savefig('./final_results/' + str(model_name) + '_paper_parameters--full')
     plt.plot()

@@ -52,7 +52,7 @@ def main(model_name, test_cuda=False):
     Precision = 100 
     bound = 0.1 
     data_size = 55000
-    n_mtcarlo_approx = 2# 150000
+    n_mtcarlo_approx = 150000
     delta_prime = 0.01
     if (model_name[0]=='R'):
         learning_rate = 0.0001
@@ -84,8 +84,6 @@ def main(model_name, test_cuda=False):
                 param_group['lr'] = learning_rate/10
             
         for i, (images, labels) in enumerate(train_loader):
-            if i > 64:
-                break
             print("\r Progress: {}%".format(100 * i // BRE.data_size), end="")
 
             images = images.reshape(-1, 28 * 28).to(device)
