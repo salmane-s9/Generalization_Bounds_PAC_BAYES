@@ -10,6 +10,8 @@ import pickle
 import os  
 import csv
 from functools import reduce
+import time
+import argparse
 
 
 def main(model_name, test_cuda=False):
@@ -38,11 +40,11 @@ def main(model_name, test_cuda=False):
     if os.path.isfile(weight_path):
         net = load_train_weights(initial_net, weight_path)
     else:
-        print('Network not already trained')
-        print('\n Starting Training for network : '+model_name)
+        print('Network not yet trained')
+        print('\n Starting Training the network : '+model_name)
         train, test = binary_mnist_loader(batch_size=BATCH_SIZE, shuffle=False, random_labels=(model_name[0]=='R'))
         run(model_name, initial_net, train, test, LEARNING_RATE, MOMENTUM, NUM_EPOCHS, device)
-        print('Traininig done for network : '+model_name)
+        print('Traininig done for the network : '+model_name)
         net = load_train_weights(initial_net, weight_path)
 
     
@@ -73,6 +75,7 @@ def main(model_name, test_cuda=False):
     nnloss = mnnLoss(criterion, BRE.flat_params, BRE.sigma_posterior_, net, BRE.d_size, device)
 
     print("==> Starting PAC-Bayes bound optimization")
+    t = time.time()
 
     mean_losses, BRE_loss, KL_value, NN_loss_final, norm_weights, norm_sigma, norm_lambda, outputs = (list() for i in range(8))
     for epoch in np.arange(1, epochs+1):   
@@ -120,6 +123,7 @@ def main(model_name, test_cuda=False):
         norm_lambda.append(torch.abs(BRE.lambda_prior_.clone().detach()))
     
     print("\n==> Optimization done ")
+    print("Computation time is {}".format(time.time() - t))
     print("\n==> Saving Parameters... ")
 
     with open('./PAC_solutions/' + str(model_name) + '_BRE_flat_params.pickle', 'wb') as handle:
@@ -134,7 +138,10 @@ def main(model_name, test_cuda=False):
     plot_results(model_name, BRE_loss, KL_value, NN_loss_final, norm_weights, norm_sigma, norm_lambda)
 
     print("\n==> Calculating SNN train error and PAC Bayes bound :", end='\t')
+    
+    t = time.time()
     snn_train_error, Pac_bound, kl = BRE.compute_bound(train_loader, delta_prime, n_mtcarlo_approx) 
+    print("Final Bounds computation time {}".format(time.time() - t))
     outputs.append(model_name)
     outputs.append(snn_train_error)
     outputs.append(Pac_bound)
@@ -154,5 +161,9 @@ def main(model_name, test_cuda=False):
         spam_writer.writerow(outputs)
     
 if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='PAC-Bayes bound optimizer')
+    parser.add_argument('-model', type=str, default='T-600', help="A neural network model")
+    args = parser.parse_args()
+
     print("CUDA is available: {}".format(torch.cuda.is_available()))
-    main(model_name='T-600', test_cuda=torch.cuda.is_available())
+    main(model_name=args.model, test_cuda=torch.cuda.is_available())

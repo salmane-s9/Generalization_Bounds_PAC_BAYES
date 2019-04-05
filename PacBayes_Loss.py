@@ -4,7 +4,7 @@ from torch.nn.utils import parameters_to_vector
 from utils import *
 from math import log
 import copy
-
+import time
 
 class PacBayesLoss(nn.Module):
     """ class for BRE loss (second term in minimization problem).
@@ -70,8 +70,10 @@ class PacBayesLoss(nn.Module):
                               the sample convergence bound
             final_bound : Final Pac Bayes bound by application of Paper theorem on SNN_train_error 
         """
+
         SNN_train_error = self.SNN_error(train_loader, delta_prime, n_mtcarlo_approx) 
-        
+
+
         j_round = torch.round(self.precision * (log(self.bound) - (2 * self.lambda_prior_)))
         lambda_prior_ = 0.5 * (log(self.bound)- (j_round/self.precision)).clone().detach()
 
@@ -101,9 +103,16 @@ class PacBayesLoss(nn.Module):
         samples_errors = 0.
         net_params = network_params(self.model)
         
-        for i in range(n_mtcarlo_approx):
-            nn_model = apply_weights(self.model, self.sample_weights(), net_params)
-            samples_errors += test_error(loader, nn_model, self.device)
+        with torch.no_grad():
+            t = time.time()
+            iter_counter = 10000
+            for i in range(n_mtcarlo_approx):
+                nn_model = apply_weights(self.model, self.sample_weights(), net_params)
+                samples_errors += test_error(loader, nn_model, self.device)
+                if i > iter_counter:
+                    print("It's {}th Monte-Carlo iteration".format(i))
+                    print("Computational time for {} is {}".format(iter_counter + i, time.time() - t))
+                    iter_counter += 10000
 
         SNN_error = solve_kl_sup(samples_errors/n_mtcarlo_approx, (log(2/delta_prime)/n_mtcarlo_approx))
         
