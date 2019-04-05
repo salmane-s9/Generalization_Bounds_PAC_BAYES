@@ -14,6 +14,7 @@ import time
 import argparse
 
 
+
 def main(model_name, test_cuda=False):
 
     print('-'*80)
@@ -139,26 +140,39 @@ def main(model_name, test_cuda=False):
 
     print("\n==> Calculating SNN train error and PAC Bayes bound :", end='\t')
     
+    train_loader, test_loader = binary_mnist_loader(batch_size=55000, shuffle=False, random_labels=(model_name[0]=='R'))
     t = time.time()
+
     snn_train_error, Pac_bound, kl = BRE.compute_bound(train_loader, delta_prime, n_mtcarlo_approx) 
     print("Final Bounds computation time {}".format(time.time() - t))
     outputs.append(model_name)
-    outputs.append(snn_train_error)
-    outputs.append(Pac_bound)
+    outputs.append(snn_train_error[-1])
+    outputs.append(Pac_bound[-1])
     print("Done")
     print("\n==> Calculating SNN test error :", end='\t')
     snn_test_error = BRE.SNN_error(test_loader, delta_prime, n_mtcarlo_approx)
-    outputs.append(snn_test_error)
+    outputs.append(snn_test_error[-1])
     outputs.append(kl.item())
     print("Done")
 
-    print('\n Epoch {} Finished \t SNN_Train Error: {:.4f}\t SNN_Test Error: {:.4f} \t PAC-bayes Bound: {:.4f}\r'.format(epoch, snn_train_error,
-                snn_test_error, Pac_bound))
+    bounds_output = []
+    for i in range(len(snn_train_error)):
+        bounds_output.append([snn_train_error[i], Pac_bound[i], snn_test_error[i]])
+
+    print('\n Epoch {} Finished \t SNN_Train Error: {:.4f}\t SNN_Test Error: {:.4f} \t PAC-bayes Bound: {:.4f}\r'.format(epoch, snn_train_error[-1],
+                snn_test_error[-1], Pac_bound[-1]))
 
     with open('./final_results/' + str(model_name) + '_.csv', 'w') as handle:
         spam_writer = csv.writer(handle, delimiter=';', quotechar='|', quoting=csv.QUOTE_MINIMAL)
-        spam_writer.writerow(['Model', 'SNN_Train_Error', 'PAC-bayes bound', 'SNN_TEST_Error', 'KL_Divergence'])
+        spam_writer.writerow(['Model', 'SNN_Train_Error', 'PAC-bayes bound', 'SNN_Test_Error', 'KL_Divergence'])
         spam_writer.writerow(outputs)
+
+    with open('./final_results/' + str(model_name) + '_bounds_mid_val.csv', 'w') as handle:
+        spam_writer = csv.writer(handle, delimiter=';', quotechar='|', quoting=csv.QUOTE_MINIMAL)
+        spam_writer.writerow(['SNN_Train_Error', 'PAC-bayes bound', 'SNN_Test_Error'])
+
+        for output in bounds_output:
+            spam_writer.writerow(output)
     
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='PAC-Bayes bound optimizer')

@@ -71,24 +71,26 @@ class PacBayesLoss(nn.Module):
             final_bound : Final Pac Bayes bound by application of Paper theorem on SNN_train_error 
         """
 
-        SNN_train_error = self.SNN_error(train_loader, delta_prime, n_mtcarlo_approx) 
-
+        snn_error = self.SNN_error(train_loader, delta_prime, n_mtcarlo_approx) 
+        final_bound = []
 
         j_round = torch.round(self.precision * (log(self.bound) - (2 * self.lambda_prior_)))
         lambda_prior_ = 0.5 * (log(self.bound)- (j_round/self.precision)).clone().detach()
 
         Bre_loss, kl = calc_BRE_term(self.precision, self.conf_param, self.bound, self.flat_params, 
-                                 self.params_0, lambda_prior_, self.sigma_posterior_, 
-                                 self.data_size, self.d_size)
+                        self.params_0, lambda_prior_, self.sigma_posterior_, 
+                        self.data_size, self.d_size)
         
         if torch.cuda.is_available():
             cuda_tensor = Bre_loss.cuda()
             Bre_loss = cuda_tensor.cpu().detach().numpy()
         else:
             Bre_loss = Bre_loss.detach().numpy()
-        final_bound = solve_kl_sup(SNN_train_error, 2 * (Bre_loss**2))
+
+        for i in snn_error:          
+            final_bound.append(solve_kl_sup(i, 2 * (Bre_loss**2)))
         
-        return SNN_train_error, final_bound, kl
+        return snn_error, final_bound, kl
     
     def sample_weights(self):      
         """
@@ -102,19 +104,23 @@ class PacBayesLoss(nn.Module):
         """
         samples_errors = 0.
         net_params = network_params(self.model)
+        snn_error = []
         
         with torch.no_grad():
             t = time.time()
-            iter_counter = 10000
+            iter_counter = 1000
             for i in range(n_mtcarlo_approx):
                 nn_model = apply_weights(self.model, self.sample_weights(), net_params)
                 samples_errors += test_error(loader, nn_model, self.device)
-                if i > iter_counter:
+                if i == iter_counter:
+                    snn_error_intermed = solve_kl_sup(samples_errors/i, (log(2/delta_prime)/i))
+                    snn_error.append(snn_error_intermed)
                     print("It's {}th Monte-Carlo iteration".format(i))
-                    print("Computational time for {} is {}".format(iter_counter + i, time.time() - t))
-                    iter_counter += 10000
+                    print("Computational time for {} is {}".format(i, time.time() - t))
+                    iter_counter += 1000
 
-        SNN_error = solve_kl_sup(samples_errors/n_mtcarlo_approx, (log(2/delta_prime)/n_mtcarlo_approx))
+        snn_final_error = solve_kl_sup(samples_errors/n_mtcarlo_approx, (log(2/delta_prime)/n_mtcarlo_approx))
+        snn_error.append(snn_final_error)
         
-        return SNN_error
+        return snn_error
 

@@ -1,19 +1,25 @@
-#### Experiments
+### Experiments
 
-1. For the model T-600 (pretrained model) and parameters setting as in the paper, get the following outputs
+#### TODO
+
+* For the model T-600 (pretrained model) and parameters setting as in the paper, get the following outputs
 
   * intermediate values during PAC-Bayes bound optimization (BRE_Loss, NN-loss, parameters norms, including weights, $\sigma$ and $\lamda$). Make a plot, where x-axis is the number of epochs and y-axis reveals the value. (Needs change in the main function)
   * PAC-Bayes bound value.
 
 Note, that the norm of sigma parameter is growing during the training because it depends on weight values (initialization of sigma is absolute weight values).
 
-2. Create a file that contains a function to train custom neural network. It takes as an input a custom model (defined in Architectures), and return weights. (DONE)
+* Add to README.md file, the short description (one-two sentences) of files in the project.ls
+
+* Analyze dependence of bound value from initial choice of $w_0$ as a mean of prior distribution.  
+
+#### DONE
+
+* Create a file that contains a function to train custom neural network. It takes as an input a custom model (defined in Architectures), and return weights.
 In the case we don't pass *weight_pass* parameter, meaning there is no pretrained model. 
 Then, it will be trained first and obtained weights will be passed to PAC-Bayes bound optimizer.
 
-3. Add to README.md file, the short description (one-two sentences) of files in the project.ls
-
-4. Customize a parameter "Model-name".
+* Customize a parameter "Model-name".
 
 ##### Running experiments
 * Pac-Bayes Bound Optimization for the model T-600, JOB_ID = 1677097
