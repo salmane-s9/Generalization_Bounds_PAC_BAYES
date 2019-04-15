@@ -38,7 +38,7 @@ class PacBayesLoss(nn.Module):
         mean of Prior distribution .
     """
     def __init__(self, lambda_prior_, sigma_posterior_, net, flat_params, conf_param, Precision, 
-                 bound, data_size, device):
+                 bound, data_size, initial_weights, device):
         
         super(PacBayesLoss, self).__init__()
         self.device = device
@@ -50,7 +50,12 @@ class PacBayesLoss(nn.Module):
         self.conf_param = conf_param
         self.bound = bound
         self.data_size = data_size
-        self.params_0 = torch.randn(self.flat_params.size()).to(self.device)
+        if (initial_weights[0]=="random"):
+            self.params_0 = torch.randn(self.flat_params.size()).to(self.device)
+        elif (initial_weights[0]=="zeros"):
+            self.params_0 = torch.zeros(self.flat_params.size()).to(self.device)
+        else:
+            self.params_0 = initial_weights[1]
         self.d_size = flat_params.size()[0]
         self.kl_value = None
         for p in self.model.parameters():
