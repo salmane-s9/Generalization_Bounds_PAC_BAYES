@@ -47,7 +47,7 @@ def main(initial_mean_prior, model_name, test_cuda=False):
         train, test = binary_mnist_loader(batch_size=BATCH_SIZE, shuffle=False, random_labels=(model_name[0]=='R'))
         run(model_name, initial_net, train, test, LEARNING_RATE, MOMENTUM, NUM_EPOCHS, device)
         print('Traininig done for the network : '+model_name)
-        initial_weights = list([initial_mean_prior, parameters_to_vector(initial_net.parameters().detach())])
+        initial_weights = list([initial_mean_prior, parameters_to_vector(initial_net.parameters()).detach()])
         net = load_train_weights(initial_net, weight_path)
 
     
