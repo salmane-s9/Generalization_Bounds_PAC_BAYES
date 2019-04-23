@@ -1,0 +1,2 @@
+before activating environment :/home/veshalaeva/miniconda3/bin:/usr/lib/oar/oardodo:/usr/lib/oar/oardodo:/usr/local/bin:/usr/bin:/bin:/usr/games$
+after activating environment :/home/veshalaeva/miniconda3/envs/apriori/bin:/home/veshalaeva/miniconda3/bin:/usr/lib/oar/oardodo:/usr/lib/oar/oardodo:/usr/local/bin:/usr/bin:/bin:/usr/games$

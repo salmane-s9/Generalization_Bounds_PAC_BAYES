@@ -13,4 +13,4 @@ Almost no difference in final bound's computational time, which uses monte-carlo
 with usage of torch.no_grad().
 
 #### torch.parallel
-Can be used to parallelize traininh by distributing batches over available GPUs if many. Since, we don't use batches in this implementation, it becomes useless.
+Can be used to parallelize training by distributing batches over available GPUs if many. Since, we don't use batches in this implementation, it becomes useless.

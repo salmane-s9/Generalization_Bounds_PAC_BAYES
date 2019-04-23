@@ -226,5 +226,5 @@ def plot_results(model_name, BRE_loss, Kl_value, NN_loss, norm_weights, norm_sig
     
     fig.legend()
     plt.tight_layout()
-    plt.savefig('./final_results/' + str(model_name) + '_paper_parameters--full')
+    plt.savefig('./final_results/' + str(model_name) + '_paper_parameters_version')
     plt.plot()

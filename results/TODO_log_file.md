@@ -22,8 +22,8 @@ Then, it will be trained first and obtained weights will be passed to PAC-Bayes 
 * Customize a parameter "Model-name".
 
 ##### Running experiments
-* Pac-Bayes Bound Optimization for the model T-600, JOB_ID = 1677097
-* Pac-Bayes Bound Optimization for the model R-600, JOB_ID = 1677099
+* Pac-Bayes Bound Optimization for the model T-600, JOB_ID = 1678534
+* Pac-Bayes Bound Optimization for the model R-600, JOB_ID = 
 
 #### Ideas
 * After running small experiments, we can run its full version (setting all parameters as in the paper) on a server.
@@ -42,10 +42,10 @@ usagepolicycheck -l --sites lille
 #####  Reserve resources
 
 * Passive mode with planning
-oarsub -p "cluster='chifflet'" -r '2019-04-05 09:05:00' -l nodes=1,walltime=72:00:00 -O output_R-600.txt ~/Generalization_Bounds_PAC_BAYES/executor_R_600.sh
+oarsub -p "cluster='chifflet'" -r '2019-04-15 19:00:00' -l nodes=1,walltime=14:00:00 -O ~/Generalization_Bounds_PAC_BAYES/output_T-600.txt ~/Generalization_Bounds_PAC_BAYES/executor.sh
 
 * Passive mode without planning
-oarsub -p "cluster='chifflet'" -l nodes=1,walltime=60:00:00 -O output_T-600.txt ~/Generalization_Bounds_PAC_BAYES/executor_T_600.sh
+oarsub -p "cluster='chifflet'" -l nodes=1,walltime=72:00:00 -O output_T-600.txt ~/Generalization_Bounds_PAC_BAYES/executor.sh
 
 Interactive mode (
   * use >>tmux to not get job deleted when the terminal is closed; 
