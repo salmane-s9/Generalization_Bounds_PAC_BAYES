@@ -15,8 +15,9 @@ import argparse
 
 
 
-def main(model_name, test_cuda=False):
-
+def main(initial_mean_prior, model_name, test_cuda=False):
+    assert(initial_mean_prior in ['random', 'zeros', 'initial_train'])
+    assert(model_name[0] in ['T','R'])
     print('-'*80)
     
     device = torch.device("cuda" if test_cuda else "cpu")
@@ -38,14 +39,15 @@ def main(model_name, test_cuda=False):
     
     weight_path = 'SGD_solutions/{}.ckpt'.format(model_name)
     
-    if os.path.isfile(weight_path):
+    if (os.path.isfile(weight_path) and initial_mean_prior!='initial_train'):
+        initial_weights = list([initial_mean_prior, None])
         net = load_train_weights(initial_net, weight_path)
     else:
-        print('Network not yet trained')
         print('\n Starting Training the network : '+model_name)
         train, test = binary_mnist_loader(batch_size=BATCH_SIZE, shuffle=False, random_labels=(model_name[0]=='R'))
         run(model_name, initial_net, train, test, LEARNING_RATE, MOMENTUM, NUM_EPOCHS, device)
         print('Traininig done for the network : '+model_name)
+        initial_weights = list([initial_mean_prior, parameters_to_vector(initial_net.parameters()).detach()])
         net = load_train_weights(initial_net, weight_path)
 
     
@@ -69,7 +71,8 @@ def main(model_name, test_cuda=False):
     sigma_posterior = torch.abs(parameters_to_vector(net.parameters())).to(device).requires_grad_()
 
     flat_params = parameters_to_vector(net.parameters())
-    BRE = PacBayesLoss(lambda_prior, sigma_posterior, net, flat_params, conf_param, Precision, bound, data_size, device).to(device)
+    BRE = PacBayesLoss(lambda_prior, sigma_posterior, net, flat_params, conf_param,
+                        Precision, bound, data_size, initial_weights,device).to(device)
 
     optimizer = torch.optim.RMSprop(filter(lambda p: p.requires_grad, BRE.parameters()), lr=learning_rate, alpha=0.9)
     criterion = nn.CrossEntropyLoss()
@@ -178,7 +181,8 @@ def main(model_name, test_cuda=False):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='PAC-Bayes bound optimizer')
     parser.add_argument('-model', type=str, default='T-600', help="A neural network model")
+    parser.add_argument('-prior_mean', type=str, default='random', help="The mean of prior distibution ")
     args = parser.parse_args()
 
     print("CUDA is available: {}".format(torch.cuda.is_available()))
-    main(model_name=args.model, test_cuda=torch.cuda.is_available())
+    main(initial_mean_prior=args.prior_mean, model_name=args.model, test_cuda=torch.cuda.is_available())

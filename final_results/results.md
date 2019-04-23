@@ -13,4 +13,20 @@ Almost no difference in final bound's computational time, which uses monte-carlo
 with usage of torch.no_grad().
 
 #### torch.parallel
-Can be used to parallelize training by distributing batches over available GPUs if many. Since, we don't use batches in this implementation, it becomes useless.
+
+Can be used to parallelize traininh by distributing batches over available GPUs if many. Since, we don't use batches in this implementation, it becomes useless.
+
+ #### Computation of Bound with different batch sizes and nb_Motecarlo_approx = 10, CUDA_FALSE
+
+
+| batch_size | time,s  |
+|------------| ---------|
+|1| 328.95781540870667|
+|100| 100.56375193595886|
+|5000| 92.92931532859802 |
+|10000| 107.97015833854675|
+|20000| 89.8711404800415|
+|30000|  90.85719680786133|
+|55000|  89.74113273620605|
+
+>>>>>>> f042accd630aa9db8c26c51243354d07e6dc0ead
