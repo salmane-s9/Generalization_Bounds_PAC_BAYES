@@ -88,10 +88,11 @@ def main(initial_mean_prior, model_name, test_cuda=False):
         if ((epoch == 4) & (model_name[0]=='T')):
             print("==> Changing Learning rate from {} to {}".format(learning_rate, learning_rate/10))
             for param_group in optimizer.param_groups:
-                param_group['lr'] = learning_rate/10
+                param_group['lr'] = learning_rate / 10
             
         for i, (images, labels) in enumerate(train_loader):
-            print("\r Progress: {}%".format(100 * i // BRE.data_size), end="")
+            if i == ((BRE.data_size * 5) / 100):
+                print("\r Progress: {}%".format(100 * i // BRE.data_size), end="")
 
             images = images.reshape(-1, 28 * 28).to(device)
             labels = labels.to(device)
@@ -103,7 +104,7 @@ def main(initial_mean_prior, model_name, test_cuda=False):
             loss = loss1 + loss2
             NN_loss.append(loss2)
 
-            if (((100 * i // BRE.data_size) - (100 * (i-1) // BRE.data_size)) != 0 and i != 0): 
+            if (i == ((BRE.data_size * 5) / 100) and ((100 * i // BRE.data_size) - (100 * 5 * (i-1) // BRE.data_size)) != 0 and i != 0): 
                 print('\t Mean loss : {} \r'.format(sum(mean_losses)/len(mean_losses)))
                 mean_losses = []
             else:
