@@ -66,7 +66,6 @@ def main(initial_mean_prior, model_name, test_cuda=False):
         learning_rate = 0.001
         epochs = 4
     
-
     lambda_prior = torch.tensor(-3., device=device).requires_grad_()
     sigma_posterior = torch.abs(parameters_to_vector(net.parameters())).to(device).requires_grad_()
 
