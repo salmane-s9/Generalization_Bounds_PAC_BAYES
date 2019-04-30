@@ -22,7 +22,7 @@ Then, it will be trained first and obtained weights will be passed to PAC-Bayes 
 * Customize a parameter "Model-name".
 
 ##### Running experiments
-* Pac-Bayes Bound Optimization for the model T-600, JOB_ID = 1678534
+* Pac-Bayes Bound Optimization for the model T-600, JOB_ID = 
 * Pac-Bayes Bound Optimization for the model R-600, JOB_ID = 
 
 #### Ideas
