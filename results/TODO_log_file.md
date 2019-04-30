@@ -55,6 +55,7 @@ Interactive mode (
 oarsub -p "cluster='chifflet'" -r '2019-03-29 13:05:00' -I -l nodes=4,walltime=6:55:0 "./executor.sh"
 
 oarsub -q production -p "cluster='grele'" -I
+oarsub -t deploy -q production -p "cluster='grele'" -l nodes=1,walltime=2 -I
 
 ###### To see statistics of the job:
 oarstat -s -j <JOB_ID>
