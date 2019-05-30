@@ -1,6 +1,8 @@
 import torch
 import torch.nn as nn
 from utils import network_params
+import torch.nn.functional as F
+from torch.nn.utils import parameters_to_vector, vector_to_parameters
 
 class mnnLoss(nn.Module):
     """ class for calcuting surrogate loss of the SNN (first term in minimization problem).
@@ -27,15 +29,10 @@ class mnnLoss(nn.Module):
     
     def forward(self, images, labels):
         self.noise = torch.randn(self.d_size).to(self.device) * torch.exp(self.sigma_posterior_)
-        modified_parameters = self.flat_params + self.noise
-        indi = 0
-        for name, ind, shape_ in network_params(self.model):
-            self.model.state_dict()[name].data.copy_(modified_parameters[indi:indi+ind].view(shape_)) 
-            indi += ind
-            
+        vector_to_parameters(self.flat_params + self.noise, self.model.parameters())
         outputs = self.model(images)
-        loss = self.criterion(outputs.float(), labels.long())
-        
+        # loss = self.criterion(outputs.float(), labels.long())
+        loss = F.cross_entropy(outputs.float(), labels.long())
         return loss
 
    

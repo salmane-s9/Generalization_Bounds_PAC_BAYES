@@ -1,6 +1,6 @@
 import torch
 import torch.nn as nn
-from torch.nn.utils import parameters_to_vector
+from torch.nn.utils import parameters_to_vector, vector_to_parameters
 from utils import *
 from math import log
 import copy
@@ -108,15 +108,15 @@ class PacBayesLoss(nn.Module):
       Compute upper bound on the error of the Stochastic neural network by application of Theorem of the sample convergence bound 
         """
         samples_errors = 0.
-        net_params = network_params(self.model)
         snn_error = []
         
         with torch.no_grad():
             t = time.time()
             iter_counter = 1000
+            
             for i in range(n_mtcarlo_approx):
-                nn_model = apply_weights(self.model, self.sample_weights(), net_params)
-                samples_errors += test_error(loader, nn_model, self.device)
+                vector_to_parameters(self.sample_weights().detach(), self.model.parameters())
+                samples_errors += test_error(loader, self.model, self.device)
                 if i == iter_counter:
                     snn_error_intermed = solve_kl_sup(samples_errors/i, (log(2/delta_prime)/i))
                     snn_error.append(snn_error_intermed)
