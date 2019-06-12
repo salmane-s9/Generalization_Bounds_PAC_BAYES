@@ -141,7 +141,7 @@ def main(initial_mean_prior, model_name, test_cuda=False):
     with open('./PAC_solutions/' + str(model_name) + '_BRE_lambda_prior.pickle', 'wb') as handle:
         pickle.dump(BRE.lambda_prior_, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
-    plot_results(model_name, BRE_loss, KL_value, NN_loss_final, norm_weights, norm_sigma, norm_lambda)
+    plot_results(model_name, BRE_loss, KL_value, NN_loss_final, norm_weights, norm_sigma, norm_lambda, initial_mean_prior)
 
     print("\n==> Calculating SNN train error and PAC Bayes bound :", end='\t')
     
