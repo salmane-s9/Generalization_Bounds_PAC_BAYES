@@ -113,16 +113,17 @@ class PacBayesLoss(nn.Module):
         
         with torch.no_grad():
             t = time.time()
-            iter_counter = 1000
+            iter_counter = 10#00
             for i in range(n_mtcarlo_approx):
                 nn_model = apply_weights(self.model, self.sample_weights(), net_params)
                 samples_errors += test_error(loader, nn_model, self.device)
                 if i == iter_counter:
-                    snn_error_intermed = solve_kl_sup(samples_errors/i, (log(2/delta_prime)/i))
-                    snn_error.append(snn_error_intermed)
                     print("It's {}th Monte-Carlo iteration".format(i))
+                    snn_error_intermed = solve_kl_sup(samples_errors/i, (log(2/delta_prime)/i))
+                    print("SNN-error is {}".format(snn_error_intermed))
+                    snn_error.append(snn_error_intermed)
                     print("Computational time for {} is {}".format(i, time.time() - t))
-                    iter_counter += 1000
+                    iter_counter += 10#00
 
         snn_final_error = solve_kl_sup(samples_errors/n_mtcarlo_approx, (log(2/delta_prime)/n_mtcarlo_approx))
         snn_error.append(snn_final_error)

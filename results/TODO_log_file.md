@@ -22,8 +22,9 @@ Then, it will be trained first and obtained weights will be passed to PAC-Bayes 
 * Customize a parameter "Model-name".
 
 ##### Running experiments
-* Pac-Bayes Bound Optimization for the model T-600, JOB_ID = 
-* Pac-Bayes Bound Optimization for the model R-600, JOB_ID = 
+* Pac-Bayes Bound Optimization for the model T-600, MntKApprx=10K, JOB_ID = 
+* Pac-Bayes Bound Optimization for the model R-600, MntKApprx=10K, JOB_ID = 
+* Code profile = 1935502
 
 #### Ideas
 * After running small experiments, we can run its full version (setting all parameters as in the paper) on a server.
@@ -44,8 +45,19 @@ usagepolicycheck -l --sites lille
 * Passive mode with planning
 oarsub -p "cluster='chifflet'" -r '2019-04-15 19:00:00' -l nodes=1,walltime=14:00:00 -O ~/Generalization_Bounds_PAC_BAYES/output_T-600.txt ~/Generalization_Bounds_PAC_BAYES/executor.sh
 
+oarsub -q production -p "cluster='grele'" -r '2019-05-02 13:00:00' -l nodes=1,walltime=30 -O executor_out.txt ~/Generalization_Bounds_PAC_BAYES/executor.sh
+
+oarsub -q production -p "cluster='grele'" -r '2019-05-02 13:00:00' -l nodes=1,walltime=24 -O executor_out_R-600.txt ~/Generalization_Bounds_PAC_BAYES/executor_R_600.sh
+
+
 * Passive mode without planning
 oarsub -p "cluster='chifflet'" -l nodes=1,walltime=72:00:00 -O output_T-600.txt ~/Generalization_Bounds_PAC_BAYES/executor.sh
+
+oarsub -q production -p "cluster='grele'" -l nodes=1,walltime=30 -O executor_out.txt ~/Generalization_Bounds_PAC_BAYES/executor.sh
+
+oarsub -q production -p "cluster='grele'" -l nodes=1,walltime=2 -O code_profile_out.txt ~/Generalization_Bounds_PAC_BAYES/code_profile.sh
+
+oarsub -q production -p "cluster='grele'" -l nodes=1,walltime=24 -O executor_out_R-600.txt ~/Generalization_Bounds_PAC_BAYES/executor_R_600.sh
 
 Interactive mode (
   * use >>tmux to not get job deleted when the terminal is closed; 
@@ -61,6 +73,10 @@ oarsub -t deploy -q production -p "cluster='grele'" -l nodes=1,walltime=2 -I
 oarstat -s -j <JOB_ID>
 
 cuda_9.0.176_384.81_linux-run
+
+###### To profile Python code
+
+python -m torch.utils.bottleneck /path/to/source/script.py [args]
 
 ###### Documentation
 [Grid5000 Getting Started](https://www.grid5000.fr/w/Getting_Started#Deploying_your_nodes_to_get_root_access_and_create_your_own_experimental_environment)
