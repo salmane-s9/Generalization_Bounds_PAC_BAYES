@@ -1,0 +1,62 @@
+CUDA is available: True
+--------------------------------------------------------------------------------
+==> Starting PAC-Bayes bound optimization
+ 
+ Epoch 1 :  
+ Progress: 5%	 Mean loss : 261.96335493607955 
+ 
+ Epoch 2 :  
+ Progress: 5%	 Mean loss : 191.53976706145522 
+ 
+ Epoch 3 :  
+ Progress: 5%	 Mean loss : 131.953403679444 
+ 
+ Epoch 4 :  
+ Progress: 5%	 Mean loss : 90.17506759470902 
+ 
+ Epoch 5 :  
+ Progress: 5%	 Mean loss : 61.59057717655448 
+ 
+ Epoch 6 :  
+ Progress: 5%	 Mean loss : 41.590060419649554 
+ 
+ Epoch 7 :  
+ Progress: 5%	 Mean loss : 30.790939586841294 
+ 
+ Epoch 8 :  
+ Progress: 5%	 Mean loss : 27.801928118004856 
+
+==> Optimization done 
+Computation time is 4127.132626533508
+
+==> Saving Parameters... 
+
+==> Calculating SNN train error and PAC Bayes bound :	It's 1000th Monte-Carlo iteration
+Computational time for 1000 is 5468.465093374252
+It's 2000th Monte-Carlo iteration
+Computational time for 2000 is 10944.895044088364
+It's 3000th Monte-Carlo iteration
+Computational time for 3000 is 16423.583594322205
+It's 4000th Monte-Carlo iteration
+Computational time for 4000 is 21901.471346378326
+It's 5000th Monte-Carlo iteration
+Computational time for 5000 is 27386.41858291626
+It's 6000th Monte-Carlo iteration
+Computational time for 6000 is 32872.07137799263
+It's 7000th Monte-Carlo iteration
+Computational time for 7000 is 38354.1216480732
+It's 8000th Monte-Carlo iteration
+Computational time for 8000 is 43831.13470888138
+It's 9000th Monte-Carlo iteration
+Computational time for 9000 is 49310.268330812454
+Final Bounds computation time 54783.31307435036
+Done
+
+==> Calculating SNN test error :	It's 1000th Monte-Carlo iteration
+Computational time for 1000 is 5564.050848007202
+It's 2000th Monte-Carlo iteration
+Computational time for 2000 is 11121.431838989258
+It's 3000th Monte-Carlo iteration
+Computational time for 3000 is 16680.255702257156
+It's 4000th Monte-Carlo iteration
+Computational time for 4000 is 22238.284340143204

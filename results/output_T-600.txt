@@ -1,0 +1,59 @@
+CUDA is available: True
+--------------------------------------------------------------------------------
+==> Starting PAC-Bayes bound optimization
+ 
+ Epoch 1 :  
+ Progress: 5%	 Mean loss : 110.8492005776492 
+ 
+ Epoch 2 :  
+ Progress: 5%	 Mean loss : 27.75394459757628 
+ 
+ Epoch 3 :  
+ Progress: 5%	 Mean loss : 11.120286097154654 
+ 
+ Epoch 4 :  
+==> Changing Learning rate from 0.001 to 0.0001
+ Progress: 5%	 Mean loss : 8.808437654846536 
+
+==> Optimization done 
+Computation time is 2065.1675684452057
+
+==> Saving Parameters... 
+
+==> Calculating SNN train error and PAC Bayes bound :	It's 1000th Monte-Carlo iteration
+Computational time for 1000 is 5620.940309047699
+It's 2000th Monte-Carlo iteration
+Computational time for 2000 is 11227.704574108124
+It's 3000th Monte-Carlo iteration
+Computational time for 3000 is 16835.668447494507
+It's 4000th Monte-Carlo iteration
+Computational time for 4000 is 22446.255855560303
+It's 5000th Monte-Carlo iteration
+Computational time for 5000 is 28731.96093273163
+It's 6000th Monte-Carlo iteration
+Computational time for 6000 is 35326.40101313591
+It's 7000th Monte-Carlo iteration
+Computational time for 7000 is 41919.80563569069
+It's 8000th Monte-Carlo iteration
+Computational time for 8000 is 48512.90687799454
+It's 9000th Monte-Carlo iteration
+Computational time for 9000 is 55105.581248521805
+Final Bounds computation time 61697.67529773712
+Done
+
+==> Calculating SNN test error :	It's 1000th Monte-Carlo iteration
+Computational time for 1000 is 5516.025336027145
+It's 2000th Monte-Carlo iteration
+Computational time for 2000 is 11013.15938448906
+It's 3000th Monte-Carlo iteration
+Computational time for 3000 is 16490.036819696426
+It's 4000th Monte-Carlo iteration
+Computational time for 4000 is 21930.407029151917
+It's 5000th Monte-Carlo iteration
+Computational time for 5000 is 27435.23176932335
+It's 6000th Monte-Carlo iteration
+Computational time for 6000 is 32906.458641052246
+It's 7000th Monte-Carlo iteration
+Computational time for 7000 is 38382.6093480587
+It's 8000th Monte-Carlo iteration
+Computational time for 8000 is 43858.4535036087
