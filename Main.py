@@ -130,13 +130,13 @@ def main(initial_mean_prior, model_name, test_cuda=False):
     print("Computation time is {}".format(time.time() - t))
     print("\n==> Saving Parameters... ")
 
-    with open('./PAC_solutions/' + str(model_name) + '_epochs_' + str(epochs) + '_init_wprior_' + str(initial_mean_prior) + '_BRE_flat_params.pickle', 'wb') as handle:
+    with open('./PAC_solutions/' + str(model_name) + '_epochs_' + str(epochs) + '_wprior_' + str(initial_mean_prior) + '_BRE_flat_params.pickle', 'wb') as handle:
         pickle.dump(BRE.flat_params, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
-    with open('./PAC_solutions/' + str(model_name) + '_epochs_' + str(epochs) + '_init_wprior_' + str(initial_mean_prior) + '_BRE_sigma_posterior.pickle', 'wb') as handle:
+    with open('./PAC_solutions/' + str(model_name) + '_epochs_' + str(epochs) + '_wprior_' + str(initial_mean_prior) + '_BRE_sigma_posterior.pickle', 'wb') as handle:
         pickle.dump(BRE.sigma_posterior_, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
-    with open('./PAC_solutions/' + str(model_name) + '_epochs_' + str(epochs) + '_init_wprior_' + str(initial_mean_prior) +'_BRE_lambda_prior.pickle', 'wb') as handle:
+    with open('./PAC_solutions/' + str(model_name) + '_epochs_' + str(epochs) + '_wprior_' + str(initial_mean_prior) +'_BRE_lambda_prior.pickle', 'wb') as handle:
         pickle.dump(BRE.lambda_prior_, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
     plot_results(model_name, BRE_loss, KL_value, NN_loss_final, norm_weights, norm_sigma, norm_lambda, epochs, initial_mean_prior)
@@ -165,12 +165,12 @@ def main(initial_mean_prior, model_name, test_cuda=False):
     print('\n Epoch {} Finished \t SNN_Train Error: {:.4f}\t SNN_Test Error: {:.4f} \t PAC-bayes Bound: {:.4f}\r'.format(epoch, snn_train_error[-1],
                 snn_test_error[-1], Pac_bound[-1]))
 
-    with open('./final_results/' + str(model_name) + '_epochs_' + str(epochs) + '_init_wprior_' + str(initial_mean_prior) + '.csv', 'w') as handle:
+    with open('./final_results/' + str(model_name) + '_epochs_' + str(epochs) + '_wprior_' + str(initial_mean_prior) + '.csv', 'w') as handle:
         spam_writer = csv.writer(handle, delimiter=';', quotechar='|', quoting=csv.QUOTE_MINIMAL)
         spam_writer.writerow(['Model', 'SNN_Train_Error', 'PAC-bayes bound', 'SNN_Test_Error', 'KL_Divergence'])
         spam_writer.writerow(outputs)
 
-    with open('./final_results/' + str(model_name) + '_epochs_' + str(epochs) + '_init_wprior_' + str(initial_mean_prior) + '_details.csv', 'w') as handle:
+    with open('./final_results/' + str(model_name) + '_epochs_' + str(epochs) + '_wprior_' + str(initial_mean_prior) + '_details.csv', 'w') as handle:
         spam_writer = csv.writer(handle, delimiter=';', quotechar='|', quoting=csv.QUOTE_MINIMAL)
         spam_writer.writerow(['SNN_Train_Error', 'PAC-bayes bound', 'SNN_Test_Error'])
 
