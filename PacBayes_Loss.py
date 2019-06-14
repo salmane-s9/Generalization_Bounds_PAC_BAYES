@@ -112,12 +112,8 @@ class PacBayesLoss(nn.Module):
         
         with torch.no_grad():
             t = time.time()
-<<<<<<< HEAD
             iter_counter = 10#00
-=======
-            iter_counter = 1000
             
->>>>>>> 90688528131dce47d7420616e6075d88467fbf6f
             for i in range(n_mtcarlo_approx):
                 vector_to_parameters(self.sample_weights().detach(), self.model.parameters())
                 samples_errors += test_error(loader, self.model, self.device)

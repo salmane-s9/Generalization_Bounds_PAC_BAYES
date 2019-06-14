@@ -197,7 +197,7 @@ def solve_kl_sup(q, right_hand_side):
     else:
         return optimize.brentq(f, q, 1.0-1e-9)
 
-def plot_results(model_name, BRE_loss, Kl_value, NN_loss, norm_weights, norm_sigma, norm_lambda, initial_mean_prior):
+def plot_results(model_name, BRE_loss, Kl_value, NN_loss, norm_weights, norm_sigma, norm_lambda, epochs, initial_mean_prior):
     
     plt.style.use('ggplot')
     range_values = range(1, len(BRE_loss) + 1) 
@@ -226,5 +226,5 @@ def plot_results(model_name, BRE_loss, Kl_value, NN_loss, norm_weights, norm_sig
     
     fig.legend()
     plt.tight_layout()
-    plt.savefig('./final_results/' + str(model_name) + str(initial_mean_prior))
+    plt.savefig('./final_results/' + str(model_name) + '_epochs_' + str(epochs) + '_init_wprior_' + str(initial_mean_prior))
     plt.plot()

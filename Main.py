@@ -51,7 +51,7 @@ def main(initial_mean_prior, model_name, test_cuda=False):
         net = load_train_weights(initial_net, weight_path)
 
     
-    train_loader, test_loader = binary_mnist_loader(batch_size=1, shuffle=False, random_labels=(model_name[0]=='R'))
+    train_loader, test_loader = binary_mnist_loader(batch_size=100, shuffle=False, random_labels=(model_name[0]=='R'))
 
     conf_param = 0.025 
     Precision = 100 
@@ -61,10 +61,10 @@ def main(initial_mean_prior, model_name, test_cuda=False):
     delta_prime = 0.01
     if (model_name[0]=='R'):
         learning_rate = 0.0001
-        epochs = 8
+        epochs = 120
     else:
         learning_rate = 0.001
-        epochs = 4
+        epochs = 20
     
     lambda_prior = torch.tensor(-3., device=device).requires_grad_()
     sigma_posterior = torch.abs(parameters_to_vector(net.parameters())).to(device).requires_grad_()
@@ -84,14 +84,12 @@ def main(initial_mean_prior, model_name, test_cuda=False):
     for epoch in np.arange(1, epochs+1):   
         NN_loss = list()
         print(" \n Epoch {} :  ".format(epoch), end="\n")
-        if ((epoch == 4) & (model_name[0]=='T')):
+        if ((epoch == 10) & (model_name[0]=='T')):
             print("==> Changing Learning rate from {} to {}".format(learning_rate, learning_rate/10))
             for param_group in optimizer.param_groups:
                 param_group['lr'] = learning_rate / 10
             
         for i, (images, labels) in enumerate(train_loader):
-            if i > 1000:
-                break
             if i == ((BRE.data_size * 5) / 100):
                 print("\r Progress: {}%".format(100 * i // BRE.data_size), end="")
 
@@ -132,16 +130,16 @@ def main(initial_mean_prior, model_name, test_cuda=False):
     print("Computation time is {}".format(time.time() - t))
     print("\n==> Saving Parameters... ")
 
-    with open('./PAC_solutions/' + str(model_name) + '_BRE_flat_params.pickle', 'wb') as handle:
+    with open('./PAC_solutions/' + str(model_name) + '_epochs_' + str(epochs) + '_init_wprior_' + str(initial_mean_prior) + '_BRE_flat_params.pickle', 'wb') as handle:
         pickle.dump(BRE.flat_params, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
-    with open('./PAC_solutions/' + str(model_name) + '_BRE_sigma_posterior.pickle', 'wb') as handle:
+    with open('./PAC_solutions/' + str(model_name) + '_epochs_' + str(epochs) + '_init_wprior_' + str(initial_mean_prior) + '_BRE_sigma_posterior.pickle', 'wb') as handle:
         pickle.dump(BRE.sigma_posterior_, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
-    with open('./PAC_solutions/' + str(model_name) + '_BRE_lambda_prior.pickle', 'wb') as handle:
+    with open('./PAC_solutions/' + str(model_name) + '_epochs_' + str(epochs) + '_init_wprior_' + str(initial_mean_prior) +'_BRE_lambda_prior.pickle', 'wb') as handle:
         pickle.dump(BRE.lambda_prior_, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
-    plot_results(model_name, BRE_loss, KL_value, NN_loss_final, norm_weights, norm_sigma, norm_lambda, initial_mean_prior)
+    plot_results(model_name, BRE_loss, KL_value, NN_loss_final, norm_weights, norm_sigma, norm_lambda, epochs, initial_mean_prior)
 
     print("\n==> Calculating SNN train error and PAC Bayes bound :", end='\t')
     
@@ -167,12 +165,12 @@ def main(initial_mean_prior, model_name, test_cuda=False):
     print('\n Epoch {} Finished \t SNN_Train Error: {:.4f}\t SNN_Test Error: {:.4f} \t PAC-bayes Bound: {:.4f}\r'.format(epoch, snn_train_error[-1],
                 snn_test_error[-1], Pac_bound[-1]))
 
-    with open('./final_results/' + str(model_name) + '_.csv', 'w') as handle:
+    with open('./final_results/' + str(model_name) + '_epochs_' + str(epochs) + '_init_wprior_' + str(initial_mean_prior) + '.csv', 'w') as handle:
         spam_writer = csv.writer(handle, delimiter=';', quotechar='|', quoting=csv.QUOTE_MINIMAL)
         spam_writer.writerow(['Model', 'SNN_Train_Error', 'PAC-bayes bound', 'SNN_Test_Error', 'KL_Divergence'])
         spam_writer.writerow(outputs)
 
-    with open('./final_results/' + str(model_name) + '_bounds_mid_val.csv', 'w') as handle:
+    with open('./final_results/' + str(model_name) + '_epochs_' + str(epochs) + '_init_wprior_' + str(initial_mean_prior) + '_details.csv', 'w') as handle:
         spam_writer = csv.writer(handle, delimiter=';', quotechar='|', quoting=csv.QUOTE_MINIMAL)
         spam_writer.writerow(['SNN_Train_Error', 'PAC-bayes bound', 'SNN_Test_Error'])
 

@@ -1,0 +1,2 @@
+before activating environment :/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:/usr/X11/bin:/home/veshalaeva/miniconda3/bin$
+after activating environment :/home/veshalaeva/miniconda3/envs/apriori/bin:/home/veshalaeva/miniconda3/condabin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:/usr/X11/bin:/home/veshalaeva/miniconda3/bin$

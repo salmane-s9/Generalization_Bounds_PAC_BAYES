@@ -1,0 +1,214 @@
+CUDA is available: True
+--------------------------------------------------------------------------------
+
+ Starting Training the network : T-600
+Epoch [1/20], Step [100/550], Loss: 0.2843
+Epoch [1/20], Step [200/550], Loss: 0.2784
+Epoch [1/20], Step [300/550], Loss: 0.2108
+Epoch [1/20], Step [400/550], Loss: 0.1776
+Epoch [1/20], Step [500/550], Loss: 0.1676
+Epoch [2/20], Step [100/550], Loss: 0.0790
+Epoch [2/20], Step [200/550], Loss: 0.0941
+Epoch [2/20], Step [300/550], Loss: 0.1331
+Epoch [2/20], Step [400/550], Loss: 0.0701
+Epoch [2/20], Step [500/550], Loss: 0.0885
+Epoch [3/20], Step [100/550], Loss: 0.0514
+Epoch [3/20], Step [200/550], Loss: 0.0450
+Epoch [3/20], Step [300/550], Loss: 0.1107
+Epoch [3/20], Step [400/550], Loss: 0.0478
+Epoch [3/20], Step [500/550], Loss: 0.0614
+Epoch [4/20], Step [100/550], Loss: 0.0399
+Epoch [4/20], Step [200/550], Loss: 0.0312
+Epoch [4/20], Step [300/550], Loss: 0.0964
+Epoch [4/20], Step [400/550], Loss: 0.0381
+Epoch [4/20], Step [500/550], Loss: 0.0507
+Epoch [5/20], Step [100/550], Loss: 0.0327
+Epoch [5/20], Step [200/550], Loss: 0.0243
+Epoch [5/20], Step [300/550], Loss: 0.0843
+Epoch [5/20], Step [400/550], Loss: 0.0315
+Epoch [5/20], Step [500/550], Loss: 0.0438
+Epoch [6/20], Step [100/550], Loss: 0.0273
+Epoch [6/20], Step [200/550], Loss: 0.0212
+Epoch [6/20], Step [300/550], Loss: 0.0748
+Epoch [6/20], Step [400/550], Loss: 0.0270
+Epoch [6/20], Step [500/550], Loss: 0.0391
+Epoch [7/20], Step [100/550], Loss: 0.0226
+Epoch [7/20], Step [200/550], Loss: 0.0187
+Epoch [7/20], Step [300/550], Loss: 0.0728
+Epoch [7/20], Step [400/550], Loss: 0.0237
+Epoch [7/20], Step [500/550], Loss: 0.0356
+Epoch [8/20], Step [100/550], Loss: 0.0191
+Epoch [8/20], Step [200/550], Loss: 0.0168
+Epoch [8/20], Step [300/550], Loss: 0.0662
+Epoch [8/20], Step [400/550], Loss: 0.0208
+Epoch [8/20], Step [500/550], Loss: 0.0329
+Epoch [9/20], Step [100/550], Loss: 0.0167
+Epoch [9/20], Step [200/550], Loss: 0.0152
+Epoch [9/20], Step [300/550], Loss: 0.0610
+Epoch [9/20], Step [400/550], Loss: 0.0184
+Epoch [9/20], Step [500/550], Loss: 0.0321
+Epoch [10/20], Step [100/550], Loss: 0.0143
+Epoch [10/20], Step [200/550], Loss: 0.0154
+Epoch [10/20], Step [300/550], Loss: 0.0561
+Epoch [10/20], Step [400/550], Loss: 0.0163
+Epoch [10/20], Step [500/550], Loss: 0.0309
+Epoch [11/20], Step [100/550], Loss: 0.0131
+Epoch [11/20], Step [200/550], Loss: 0.0149
+Epoch [11/20], Step [300/550], Loss: 0.0528
+Epoch [11/20], Step [400/550], Loss: 0.0145
+Epoch [11/20], Step [500/550], Loss: 0.0305
+Epoch [12/20], Step [100/550], Loss: 0.0117
+Epoch [12/20], Step [200/550], Loss: 0.0145
+Epoch [12/20], Step [300/550], Loss: 0.0501
+Epoch [12/20], Step [400/550], Loss: 0.0129
+Epoch [12/20], Step [500/550], Loss: 0.0300
+Epoch [13/20], Step [100/550], Loss: 0.0106
+Epoch [13/20], Step [200/550], Loss: 0.0137
+Epoch [13/20], Step [300/550], Loss: 0.0477
+Epoch [13/20], Step [400/550], Loss: 0.0115
+Epoch [13/20], Step [500/550], Loss: 0.0309
+Epoch [14/20], Step [100/550], Loss: 0.0097
+Epoch [14/20], Step [200/550], Loss: 0.0133
+Epoch [14/20], Step [300/550], Loss: 0.0454
+Epoch [14/20], Step [400/550], Loss: 0.0107
+Epoch [14/20], Step [500/550], Loss: 0.0319
+Epoch [15/20], Step [100/550], Loss: 0.0088
+Epoch [15/20], Step [200/550], Loss: 0.0119
+Epoch [15/20], Step [300/550], Loss: 0.0430
+Epoch [15/20], Step [400/550], Loss: 0.0099
+Epoch [15/20], Step [500/550], Loss: 0.0325
+Epoch [16/20], Step [100/550], Loss: 0.0079
+Epoch [16/20], Step [200/550], Loss: 0.0113
+Epoch [16/20], Step [300/550], Loss: 0.0418
+Epoch [16/20], Step [400/550], Loss: 0.0093
+Epoch [16/20], Step [500/550], Loss: 0.0316
+Epoch [17/20], Step [100/550], Loss: 0.0069
+Epoch [17/20], Step [200/550], Loss: 0.0099
+Epoch [17/20], Step [300/550], Loss: 0.0406
+Epoch [17/20], Step [400/550], Loss: 0.0087
+Epoch [17/20], Step [500/550], Loss: 0.0307
+Epoch [18/20], Step [100/550], Loss: 0.0062
+Epoch [18/20], Step [200/550], Loss: 0.0084
+Epoch [18/20], Step [300/550], Loss: 0.0390
+Epoch [18/20], Step [400/550], Loss: 0.0085
+Epoch [18/20], Step [500/550], Loss: 0.0289
+Epoch [19/20], Step [100/550], Loss: 0.0054
+Epoch [19/20], Step [200/550], Loss: 0.0073
+Epoch [19/20], Step [300/550], Loss: 0.0356
+Epoch [19/20], Step [400/550], Loss: 0.0081
+Epoch [19/20], Step [500/550], Loss: 0.0275
+Epoch [20/20], Step [100/550], Loss: 0.0049
+Epoch [20/20], Step [200/550], Loss: 0.0062
+Epoch [20/20], Step [300/550], Loss: 0.0337
+Epoch [20/20], Step [400/550], Loss: 0.0078
+Epoch [20/20], Step [500/550], Loss: 0.0252
+Accuracy of the network on the 10000 test images: 97.98 %
+Traininig done for the network : T-600
+==> Starting PAC-Bayes bound optimization
+ 
+ Epoch 1 :  
+ 
+ Epoch 2 :  
+ 
+ Epoch 3 :  
+ 
+ Epoch 4 :  
+ 
+ Epoch 5 :  
+ 
+ Epoch 6 :  
+ 
+ Epoch 7 :  
+ 
+ Epoch 8 :  
+ 
+ Epoch 9 :  
+ 
+ Epoch 10 :  
+==> Changing Learning rate from 0.001 to 0.0001
+ 
+ Epoch 11 :  
+ 
+ Epoch 12 :  
+ 
+ Epoch 13 :  
+ 
+ Epoch 14 :  
+ 
+ Epoch 15 :  
+ 
+ Epoch 16 :  
+ 
+ Epoch 17 :  
+ 
+ Epoch 18 :  
+ 
+ Epoch 19 :  
+ 
+ Epoch 20 :  
+
+==> Optimization done 
+Computation time is 190.29450631141663
+
+==> Saving Parameters... 
+
+==> Calculating SNN train error and PAC Bayes bound :	It's 10th Monte-Carlo iteration
+SNN-error is 0.8092364083117219
+Computational time for 10 is 59.89876055717468
+It's 20th Monte-Carlo iteration
+SNN-error is 0.6706629527411196
+Computational time for 20 is 114.42676091194153
+It's 30th Monte-Carlo iteration
+SNN-error is 0.603448058888648
+Computational time for 30 is 169.31365370750427
+It's 40th Monte-Carlo iteration
+SNN-error is 0.5571883890479751
+Computational time for 40 is 223.42260360717773
+It's 50th Monte-Carlo iteration
+SNN-error is 0.5361645049747731
+Computational time for 50 is 277.58710289001465
+It's 60th Monte-Carlo iteration
+SNN-error is 0.5128475741995289
+Computational time for 60 is 332.27211809158325
+It's 70th Monte-Carlo iteration
+SNN-error is 0.4936983179872401
+Computational time for 70 is 386.6674454212189
+It's 80th Monte-Carlo iteration
+SNN-error is 0.47931495948917247
+Computational time for 80 is 441.41145038604736
+It's 90th Monte-Carlo iteration
+SNN-error is 0.46773667856200246
+Computational time for 90 is 496.30436301231384
+Final Bounds computation time 544.9267020225525
+Done
+
+==> Calculating SNN test error :	It's 10th Monte-Carlo iteration
+SNN-error is 0.7872308731642905
+Computational time for 10 is 56.32102417945862
+It's 20th Monte-Carlo iteration
+SNN-error is 0.6477898850564754
+Computational time for 20 is 107.65652394294739
+It's 30th Monte-Carlo iteration
+SNN-error is 0.5791139774015726
+Computational time for 30 is 158.85351991653442
+It's 40th Monte-Carlo iteration
+SNN-error is 0.5453175045272728
+Computational time for 40 is 210.1557376384735
+It's 50th Monte-Carlo iteration
+SNN-error is 0.5182234598253888
+Computational time for 50 is 261.57547330856323
+It's 60th Monte-Carlo iteration
+SNN-error is 0.4968330721052745
+Computational time for 60 is 312.97260093688965
+It's 70th Monte-Carlo iteration
+SNN-error is 0.4791638616389758
+Computational time for 70 is 364.35538148880005
+It's 80th Monte-Carlo iteration
+SNN-error is 0.463845435324332
+Computational time for 80 is 415.33611941337585
+It's 90th Monte-Carlo iteration
+SNN-error is 0.45339113446679585
+Computational time for 90 is 466.34777641296387
+Done
+
+ Epoch 20 Finished 	 SNN_Train Error: 0.4547	 SNN_Test Error: 0.4399 	 PAC-bayes Bound: 1.0000

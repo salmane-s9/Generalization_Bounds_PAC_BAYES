@@ -1,0 +1,110 @@
+CUDA is available: True
+--------------------------------------------------------------------------------
+==> Starting PAC-Bayes bound optimization
+ 
+ Epoch 1 :  
+ 
+ Epoch 2 :  
+ 
+ Epoch 3 :  
+ 
+ Epoch 4 :  
+ 
+ Epoch 5 :  
+ 
+ Epoch 6 :  
+ 
+ Epoch 7 :  
+ 
+ Epoch 8 :  
+ 
+ Epoch 9 :  
+ 
+ Epoch 10 :  
+==> Changing Learning rate from 0.001 to 0.0001
+ 
+ Epoch 11 :  
+ 
+ Epoch 12 :  
+ 
+ Epoch 13 :  
+ 
+ Epoch 14 :  
+ 
+ Epoch 15 :  
+ 
+ Epoch 16 :  
+ 
+ Epoch 17 :  
+ 
+ Epoch 18 :  
+ 
+ Epoch 19 :  
+ 
+ Epoch 20 :  
+
+==> Optimization done 
+Computation time is 191.43661618232727
+
+==> Saving Parameters... 
+
+==> Calculating SNN train error and PAC Bayes bound :	It's 10th Monte-Carlo iteration
+SNN-error is 0.7975634049164018
+Computational time for 10 is 60.69039964675903
+It's 20th Monte-Carlo iteration
+SNN-error is 0.6703309378717806
+Computational time for 20 is 115.51944589614868
+It's 30th Monte-Carlo iteration
+SNN-error is 0.5977282028859489
+Computational time for 30 is 171.33552598953247
+It's 40th Monte-Carlo iteration
+SNN-error is 0.5573802372315855
+Computational time for 40 is 226.89220094680786
+It's 50th Monte-Carlo iteration
+SNN-error is 0.5217066215964486
+Computational time for 50 is 282.1583003997803
+It's 60th Monte-Carlo iteration
+SNN-error is 0.4995002426214803
+Computational time for 60 is 337.9718608856201
+It's 70th Monte-Carlo iteration
+SNN-error is 0.48389515478199946
+Computational time for 70 is 393.92579340934753
+It's 80th Monte-Carlo iteration
+SNN-error is 0.4726519609848569
+Computational time for 80 is 448.9569180011749
+It's 90th Monte-Carlo iteration
+SNN-error is 0.4607933828463933
+Computational time for 90 is 503.70888471603394
+Final Bounds computation time 553.7915034294128
+Done
+
+==> Calculating SNN test error :	It's 10th Monte-Carlo iteration
+SNN-error is 0.7851368571130782
+Computational time for 10 is 55.617552042007446
+It's 20th Monte-Carlo iteration
+SNN-error is 0.6575147721787156
+Computational time for 20 is 106.1368055343628
+It's 30th Monte-Carlo iteration
+SNN-error is 0.59137446575029
+Computational time for 30 is 156.636901140213
+It's 40th Monte-Carlo iteration
+SNN-error is 0.5500104738251749
+Computational time for 40 is 207.28674268722534
+It's 50th Monte-Carlo iteration
+SNN-error is 0.5244437768692731
+Computational time for 50 is 257.8338325023651
+It's 60th Monte-Carlo iteration
+SNN-error is 0.5059897763958079
+Computational time for 60 is 308.29902362823486
+It's 70th Monte-Carlo iteration
+SNN-error is 0.4919467202285939
+Computational time for 70 is 358.84866523742676
+It's 80th Monte-Carlo iteration
+SNN-error is 0.4798442986955912
+Computational time for 80 is 409.36648631095886
+It's 90th Monte-Carlo iteration
+SNN-error is 0.4693267336777055
+Computational time for 90 is 459.92494916915894
+Done
+
+ Epoch 20 Finished 	 SNN_Train Error: 0.4492	 SNN_Test Error: 0.4559 	 PAC-bayes Bound: 1.0000
